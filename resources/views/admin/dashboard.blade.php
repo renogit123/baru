@@ -22,6 +22,13 @@
             class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
             Kelola Biodata User
             </a>
+
+                {{-- Tombol Kelola Pelatihan --}}
+            <a href="{{ route('admin.jadwal-pelatihan.index') }}"
+            class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+             Kelola Pelatihan
+            </a>
+
         </div>
 
         {{-- Kamu bisa tambahkan card/tautan lain di sini --}}

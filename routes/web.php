@@ -1,75 +1,89 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\User\BiodataController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\User\BiodataController;
+use App\Http\Controllers\User\PelatihanUserController;
+use App\Http\Controllers\Admin\BiodataUserController;
 use App\Http\Controllers\Admin\ProvinsiController;
 use App\Http\Controllers\Admin\KabupatenKotaController;
 use App\Http\Controllers\Admin\KecamatanController;
 use App\Http\Controllers\Admin\KelurahanController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Admin\BiodataUserController;
+use App\Http\Controllers\Admin\PelatihanController;
+use App\Http\Controllers\Admin\JadwalPelatihanController;
+use App\Http\Controllers\Admin\RegisterPelatihanController;
 
-// Halaman welcome
+// Halaman awal
 Route::get('/', fn() => view('welcome'));
 
-// Redirect ke dashboard yang sesuai role
+// Redirect dashboard sesuai role
 Route::get('/dashboard', function () {
-    $user = Auth::user();
-    return redirect()->route($user->role === 'admin' ? 'admin.dashboard' : 'user.dashboard');
+    return redirect()->route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'user.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Routes setelah login
+// Middleware umum setelah login
 Route::middleware('auth')->group(function () {
-    // Profile
+    // Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Admin routes (hanya admin bisa akses)
-    Route::prefix('admin')->middleware('role:admin')->name('admin.')->group(function () {
-        // Dashboard admin
-        Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-        // Halaman manajemen wilayah
-        Route::get('/wilayah', [AdminController::class, 'wilayah'])->name('wilayah');
-        // CRUD resource tanpa index/create/edit/show
-        Route::resource('provinsi', ProvinsiController::class)->only(['store','update','destroy']);
-        Route::resource('kabupaten-kota', KabupatenKotaController::class)->only(['store','update','destroy']);
-        Route::resource('kecamatan', KecamatanController::class)->only(['store','update','destroy']);
-        Route::resource('kelurahan', KelurahanController::class)->only(['store','update','destroy']);
-    });
-
-    // User routes (semua yang login bisa akses)
-Route::prefix('user')
-    ->middleware(['auth'])      // hanya butuh login, tanpa cek role khusus
-    ->name('user.')
-    ->group(function () {
-        Route::get('/dashboard', [UserController::class, 'index'])
-            ->name('dashboard');
-    });
-    
-    Route::delete('/admin/provinsi/{id}', [ProvinsiController::class, 'destroy'])->name('admin.provinsi.destroy');
-    Route::delete('/admin/kabupaten-kota/{id}', [KabupatenKotaController::class, 'destroy'])->name('admin.kabupaten-kota.destroy');
-    Route::delete('/admin/kecamatan/{id}', [KecamatanController::class, 'destroy'])->name('admin.kecamatan.destroy');
-    Route::delete('/admin/kelurahan/{id}', [KelurahanController::class, 'destroy'])->name('admin.kelurahan.destroy');
-    });
-
-    Route::middleware(['auth'])->group(function () {
-    Route::get('/user/biodata', [BiodataController::class, 'form'])->name('user.biodata.form');
-    Route::post('/user/biodata', [BiodataController::class, 'store'])->name('user.biodata.store');
 });
 
-// routes/web.php
-Route::get('/admin/biodata-user', [BiodataUserController::class, 'index'])->name('admin.user.biodata.index');
+// ================= ADMIN =================
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
+    // Dashboard & Wilayah
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/wilayah', [AdminController::class, 'wilayah'])->name('wilayah');
 
-Route::get('/admin/biodata-user', [BiodataUserController::class, 'index'])->name('admin.user.biodata.index');
-Route::get('/admin/biodata-user/{id}/edit', [BiodataUserController::class, 'edit'])->name('admin.user.biodata.edit');
-Route::put('/admin/biodata-user/{id}', [BiodataUserController::class, 'update'])->name('admin.user.biodata.update');    
-    
+    // Wilayah CRUD (tanpa index/edit/create/show)
+    Route::resource('provinsi', ProvinsiController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('kabupaten-kota', KabupatenKotaController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('kecamatan', KecamatanController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('kelurahan', KelurahanController::class)->only(['store', 'update', 'destroy']);
 
+    // Biodata User
+    Route::get('/biodata-user', [BiodataUserController::class, 'index'])->name('user.biodata.index');
+    Route::get('/biodata-user/{id}/edit', [BiodataUserController::class, 'edit'])->name('user.biodata.edit');
+    Route::put('/biodata-user/{id}', [BiodataUserController::class, 'update'])->name('user.biodata.update');
 
+    // Pelatihan CRUD
+    Route::prefix('pelatihan')->name('pelatihan.')->group(function () {
+        Route::get('/', [PelatihanController::class, 'index'])->name('index');
+        Route::get('/create', [PelatihanController::class, 'create'])->name('create');
+        Route::post('/store', [PelatihanController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [PelatihanController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [PelatihanController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PelatihanController::class, 'destroy'])->name('destroy');
+        Route::put('/{register}/acc', [RegisterPelatihanController::class, 'acc'])->name('acc');
+    });
+
+    // Jadwal Pelatihan
+    Route::prefix('jadwal-pelatihan')->name('jadwal-pelatihan.')->group(function () {
+        Route::get('/', [JadwalPelatihanController::class, 'index'])->name('index');
+        Route::get('/create', [JadwalPelatihanController::class, 'create'])->name('create');
+        Route::post('/', [JadwalPelatihanController::class, 'store'])->name('store');
+        Route::get('/{id}', [JadwalPelatihanController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [JadwalPelatihanController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [JadwalPelatihanController::class, 'update'])->name('update');
+        Route::delete('/{id}', [JadwalPelatihanController::class, 'destroy'])->name('destroy');
+    });
+
+    // Register pelatihan peserta (khusus admin)
+    Route::get('/register', [RegisterPelatihanController::class, 'index'])->name('register.index');
+    Route::put('/register/acc/{id}', [RegisterPelatihanController::class, 'acc'])->name('register.acc');
+});
+
+// ================= USER =================
+Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
+    Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
+    Route::get('/biodata', [BiodataController::class, 'form'])->name('biodata.form');
+    Route::post('/biodata', [BiodataController::class, 'store'])->name('biodata.store');
+    Route::get('/pelatihan', [PelatihanUserController::class, 'index'])->name('pelatihan.index');
+    Route::post('/pelatihan/{id}/daftar', [PelatihanUserController::class, 'daftar'])->name('pelatihan.daftar');
+});
 
 // Auth scaffolding
 require __DIR__.'/auth.php';
