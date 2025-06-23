@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\KecamatanController;
 use App\Http\Controllers\Admin\KelurahanController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\BiodataUserController;
 
 // Halaman welcome
 Route::get('/', fn() => view('welcome'));
@@ -60,6 +61,12 @@ Route::prefix('user')
     Route::post('/user/biodata', [BiodataController::class, 'store'])->name('user.biodata.store');
 });
 
+// routes/web.php
+Route::get('/admin/biodata-user', [BiodataUserController::class, 'index'])->name('admin.user.biodata.index');
+
+Route::get('/admin/biodata-user', [BiodataUserController::class, 'index'])->name('admin.user.biodata.index');
+Route::get('/admin/biodata-user/{id}/edit', [BiodataUserController::class, 'edit'])->name('admin.user.biodata.edit');
+Route::put('/admin/biodata-user/{id}', [BiodataUserController::class, 'update'])->name('admin.user.biodata.update');    
     
 
 

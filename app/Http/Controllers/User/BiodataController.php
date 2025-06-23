@@ -12,13 +12,15 @@ class BiodataController extends Controller
 {
     // Tampilkan form biodata
     public function form()
-{
-    $user = Auth::user();
-    $biodata = $user->biodata;
-    $kelurahans = Kelurahan::all(); // ambil semua data desa/kelurahan
+    {
+        $user = Auth::user();
+        $biodata = $user->biodata;
 
-    return view('user.biodata.form', compact('biodata', 'kelurahans'));
-}
+        // Ambil semua kelurahan beserta relasi kecamatan -> kabupaten -> provinsi
+        $kelurahans = Kelurahan::with('kecamatan.kabupatenKota.provinsi')->get();
+
+        return view('user.biodata.form', compact('biodata', 'kelurahans'));
+    }
 
     // Simpan atau update data biodata
     public function store(Request $request)

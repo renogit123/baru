@@ -29,7 +29,8 @@ class AdminController extends Controller
                                  ->orWhere('kode', 'like', "%{$search}%");
                 })
                 ->orderBy('nama')
-                ->paginate(100, ['*'], 'provinsis'),
+                ->paginate(10, ['*'], 'provinsis')
+                ->appends(['search_provinsi' => $searchProvinsi]),
 
             // ================== KABUPATEN/KOTA ==================
             'kabupatens' => KabupatenKota::with('provinsi')
@@ -38,7 +39,8 @@ class AdminController extends Controller
                                  ->orWhere('kode', 'like', "%{$search}%");
                 })
                 ->orderBy('nama')
-                ->paginate(100, ['*'], 'kabupatens'),
+                ->paginate(10, ['*'], 'kabupatens')
+                ->appends(['search_kabupaten_kota' => $searchKabupaten]),
 
             // ================== KECAMATAN ==================
             'kecamatans' => Kecamatan::with('kabupatenKota')
@@ -47,16 +49,18 @@ class AdminController extends Controller
                                  ->orWhere('kode', 'like', "%{$search}%");
                 })
                 ->orderBy('nama')
-                ->paginate(100, ['*'], 'kecamatans'),
+                ->paginate(10, ['*'], 'kecamatans')
+                ->appends(['search_kecamatan' => $searchKecamatan]),
 
             // ================== KELURAHAN ==================
-            'kelurahans' => Kelurahan::with('kecamatan')
+            'kelurahans' => Kelurahan::with('kecamatan.kabupatenKota.provinsi')
                 ->when($searchKelurahan, function ($query, $search) {
                     return $query->where('nama', 'like', "%{$search}%")
                                  ->orWhere('kode', 'like', "%{$search}%");
                 })
                 ->orderBy('nama')
-                ->paginate(100, ['*'], 'kelurahans'),
+                ->paginate(10, ['*'], 'kelurahans')
+                ->appends(['search_kelurahan' => $searchKelurahan]),
 
             // ================== DATA EDIT ==================
             'editProvinsi' => $request->edit_provinsi ? Provinsi::find($request->edit_provinsi) : null,
