@@ -52,12 +52,12 @@
 
         {{-- ========== TABEL ========== --}}
         @foreach ([
-            ['title' => 'Daftar Provinsi', 'items' => $provinsis, 'cols' => ['nama', 'kode'], 'action' => 'provinsi', 'editVar' => 'edit_provinsi'],
-            ['title' => 'Daftar Kabupaten/Kota', 'items' => $kabupatens, 'cols' => ['nama', 'kode', 'provinsi.nama'], 'action' => 'kabupaten-kota', 'editVar' => 'edit_kabupaten_kota'],
-            ['title' => 'Daftar Kecamatan', 'items' => $kecamatans, 'cols' => ['nama', 'kode', 'kabupatenKota.nama'], 'action' => 'kecamatan', 'editVar' => 'edit_kecamatan'],
-            ['title' => 'Daftar Kelurahan/Desa', 'items' => $kelurahans, 'cols' => ['nama', 'kode', 'kecamatan.nama'], 'action' => 'kelurahan', 'editVar' => 'edit_kelurahan'],
+            ['title' => 'Daftar Provinsi', 'items' => $provinsis, 'cols' => ['nama', 'kode'], 'action' => 'provinsi', 'editVar' => 'edit_provinsi', 'searchKey' => 'search_provinsi'],
+            ['title' => 'Daftar Kabupaten/Kota', 'items' => $kabupatens, 'cols' => ['nama', 'kode', 'provinsi.nama'], 'action' => 'kabupaten-kota', 'editVar' => 'edit_kabupaten_kota', 'searchKey' => 'search_kabupaten_kota'],
+            ['title' => 'Daftar Kecamatan', 'items' => $kecamatans, 'cols' => ['nama', 'kode', 'kabupatenKota.nama'], 'action' => 'kecamatan', 'editVar' => 'edit_kecamatan', 'searchKey' => 'search_kecamatan'],
+            ['title' => 'Daftar Kelurahan/Desa', 'items' => $kelurahans, 'cols' => ['nama', 'kode', 'kecamatan.nama'], 'action' => 'kelurahan', 'editVar' => 'edit_kelurahan', 'searchKey' => 'search_kelurahan'],
         ] as $table)
-        <div x-data="{ search: '', show: false }" class="bg-white p-6 rounded-lg shadow">
+        <div x-data="{ show: false }" class="bg-white p-6 rounded-lg shadow">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold">{{ $table['title'] }}</h3>
                 <button @click="show = !show" class="text-sm px-3 py-1 bg-indigo-100 hover:bg-indigo-200 rounded">
@@ -67,14 +67,17 @@
             </div>
 
             <div x-show="show" x-cloak>
-                <div class="mb-4">
+                {{-- FORM SEARCH --}}
+                <form method="GET" class="mb-4">
                     <input
-                        x-model="search"
                         type="text"
+                        name="{{ $table['searchKey'] }}"
+                        value="{{ request($table['searchKey']) }}"
                         placeholder="Cari {{ strtolower($table['title']) }}..."
                         class="border border-gray-300 rounded px-3 py-1 w-64"
                     />
-                </div>
+                    <button type="submit" class="ml-2 px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm">🔍 Cari</button>
+                </form>
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full border divide-y divide-gray-300">
@@ -90,7 +93,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             @foreach($table['items'] as $item)
-                                <tr x-show="JSON.stringify(@js(array_map(fn($c) => data_get($item, $c), $table['cols']))).toLowerCase().includes(search.toLowerCase())" class="hover:bg-gray-50">
+                                <tr class="hover:bg-gray-50">
                                     @foreach($table['cols'] as $col)
                                         <td class="px-6 py-4 text-sm text-gray-800">
                                             {{ data_get($item, $col) }}
@@ -109,7 +112,7 @@
                                             @method('DELETE')
                                             <button type="submit"
                                                 class="inline-flex items-center px-3 py-1 bg-red-300 text-black text-xs font-medium rounded hover:bg-red-400">
-                                                🖑️ Hapus
+                                                🗑️ Hapus
                                             </button>
                                         </form>
                                     </td>
@@ -119,6 +122,7 @@
                     </table>
                 </div>
 
+                {{-- PAGINATION --}}
                 <div class="mt-4">
                     {{ $table['items']->withQueryString()->links() }}
                 </div>
