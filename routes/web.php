@@ -47,6 +47,12 @@ Route::prefix('user')
         Route::get('/dashboard', [UserController::class, 'index'])
             ->name('dashboard');
     });
+    
+    Route::delete('/admin/provinsi/{id}', [ProvinsiController::class, 'destroy'])->name('admin.provinsi.destroy');
+    Route::delete('/admin/kabupaten-kota/{id}', [KabupatenKotaController::class, 'destroy'])->name('admin.kabupaten-kota.destroy');
+    Route::delete('/admin/kecamatan/{id}', [KecamatanController::class, 'destroy'])->name('admin.kecamatan.destroy');
+    Route::delete('/admin/kelurahan/{id}', [KelurahanController::class, 'destroy'])->name('admin.kelurahan.destroy');
+
 
 });
 
