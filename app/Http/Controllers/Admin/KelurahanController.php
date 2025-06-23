@@ -13,7 +13,7 @@ class KelurahanController extends Controller
         $request->validate([
             'kecamatan_id' => 'required|exists:kecamatans,id',
             'nama'         => 'required|string|max:255',
-            'kode'         => 'nullable|string|max:50',
+            'kode'         => 'nullable|string|max:255',
         ]);
 
         Kelurahan::create($request->only('kecamatan_id', 'nama', 'kode'));
@@ -26,7 +26,7 @@ class KelurahanController extends Controller
         $request->validate([
             'kecamatan_id' => 'required|exists:kecamatans,id',
             'nama'         => 'required|string|max:255',
-            'kode'         => 'nullable|string|max:50',
+            'kode'         => 'nullable|string|max:255',
         ]);
 
         $kelurahan->update($request->only('kecamatan_id', 'nama', 'kode'));

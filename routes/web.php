@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\User\BiodataController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Admin\ProvinsiController;
 use App\Http\Controllers\Admin\KabupatenKotaController;
@@ -52,9 +53,16 @@ Route::prefix('user')
     Route::delete('/admin/kabupaten-kota/{id}', [KabupatenKotaController::class, 'destroy'])->name('admin.kabupaten-kota.destroy');
     Route::delete('/admin/kecamatan/{id}', [KecamatanController::class, 'destroy'])->name('admin.kecamatan.destroy');
     Route::delete('/admin/kelurahan/{id}', [KelurahanController::class, 'destroy'])->name('admin.kelurahan.destroy');
+    });
 
-
+    Route::middleware(['auth'])->group(function () {
+    Route::get('/user/biodata', [BiodataController::class, 'form'])->name('user.biodata.form');
+    Route::post('/user/biodata', [BiodataController::class, 'store'])->name('user.biodata.store');
 });
+
+    
+
+
 
 // Auth scaffolding
 require __DIR__.'/auth.php';
