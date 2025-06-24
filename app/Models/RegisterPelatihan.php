@@ -17,4 +17,10 @@ class RegisterPelatihan extends Model
     {
         return $this->belongsTo(JadwalPelatihan::class, 'id_jadwal');
     }
+
+    public function jadwalPelatihan()
+{
+    return $this->belongsTo(\App\Models\JadwalPelatihan::class, 'jadwal_pelatihan_id');
+}
+    
 }

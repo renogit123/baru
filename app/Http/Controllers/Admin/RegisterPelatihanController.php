@@ -25,5 +25,15 @@ class RegisterPelatihanController extends Controller
         return redirect()->back()->with('success', 'Peserta berhasil di-ACC.');
     }
 
+    public function hadir($id)
+{
+    $reg = \App\Models\RegisterPelatihan::findOrFail($id);
+    $reg->status_kehadiran = 'hadir';
+    $reg->save();
+
+    return redirect()->back()->with('success', 'Peserta berhasil absen.');
+}
+
+
     
 }

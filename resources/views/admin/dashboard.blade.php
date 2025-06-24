@@ -10,27 +10,36 @@
         <div class="bg-white p-4 rounded shadow">
             <h3 class="text-lg font-bold mb-2">Selamat Datang, {{ auth()->user()->name }}!</h3>
             <p class="text-gray-600">Silakan gunakan tombol berikut untuk mengelola data wilayah dan biodata pengguna.</p>
-            
+
             {{-- Tombol Kelola Wilayah --}}
             <a href="{{ route('admin.wilayah') }}"
                class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
                 Kelola Data Wilayah
             </a>
 
-            {{-- Tombol Edit Biodata User --}}
+            {{-- Tombol Kelola Biodata User --}}
             <a href="{{ route('admin.user.biodata.index') }}"
-            class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
-            Kelola Biodata User
+               class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+                Kelola Biodata User
             </a>
 
-                {{-- Tombol Kelola Pelatihan --}}
+            {{-- Tombol Kelola Jadwal Pelatihan --}}
             <a href="{{ route('admin.jadwal-pelatihan.index') }}"
-            class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
-             Kelola Pelatihan
+               class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+                Kelola Jadwal Pelatihan
             </a>
+
+            {{-- ✅ Tombol Scan Kehadiran --}}
+            <a href="{{ route('admin.scan') }}"
+            class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+            Scan Kehadiran
+            </a>
+
+            <a href="{{ route('admin.kehadiran') }}"
+            class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+            Lihat Kehadiran Peserta
+</a>
 
         </div>
-
-        {{-- Kamu bisa tambahkan card/tautan lain di sini --}}
     </div>
 </x-app-layout>

@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\KelurahanController;
 use App\Http\Controllers\Admin\PelatihanController;
 use App\Http\Controllers\Admin\JadwalPelatihanController;
 use App\Http\Controllers\Admin\RegisterPelatihanController;
+use App\Http\Controllers\user\BarcodeController;
+use App\Http\Controllers\Admin\ScanAbsenController;
 
 // Halaman awal
 Route::get('/', fn() => view('welcome'));
@@ -84,6 +86,18 @@ Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
     Route::get('/pelatihan', [PelatihanUserController::class, 'index'])->name('pelatihan.index');
     Route::post('/pelatihan/{id}/daftar', [PelatihanUserController::class, 'daftar'])->name('pelatihan.daftar');
 });
+Route::get('/user/barcode', [\App\Http\Controllers\User\BarcodeController::class, 'index'])->name('user.barcode');
+Route::get('/admin/scan-kehadiran/{id}', [RegisterPelatihanController::class, 'hadir'])->name('admin.absen.hadir');
+// Halaman scan QR (user)
+Route::get('/admin/scan-absen', [ScanAbsenController::class, 'form'])->name('admin.scan');
+Route::post('/admin/scan-absen', [ScanAbsenController::class, 'proses'])->name('admin.scan.proses');
+Route::get('/admin/scan-absen', [App\Http\Controllers\Admin\ScanAbsenController::class, 'form'])->name('admin.scan');
+
+Route::get('/user/barcode', [BarcodeController::class, 'index'])->name('user.qrcode');
+Route::post('/admin/scan-absen', [ScanAbsenController::class, 'proses'])->name('admin.scan.proses');
+Route::get('/admin/kehadiran', [\App\Http\Controllers\Admin\ScanAbsenController::class, 'daftarHadir'])->name('admin.kehadiran');
+
+
 
 // Auth scaffolding
 require __DIR__.'/auth.php';

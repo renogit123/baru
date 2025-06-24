@@ -16,8 +16,8 @@
 
           {{-- Tombol Pelatihan --}}
           <a href="{{ route('user.pelatihan.index') }}"
-             class="inline-block px-5 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center">
-              📅 Lihat Jadwal Pelatihan
+          class="inline-block px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-center">
+          📅 Lihat Jadwal Pelatihan
           </a>
       </div>
   </div>

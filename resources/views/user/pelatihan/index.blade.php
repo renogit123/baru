@@ -33,6 +33,10 @@
                         <p class="text-yellow-600 font-semibold mt-2">Status: Menunggu Persetujuan</p>
                     @elseif($register->status_peserta === 'approved')
                         <p class="text-green-600 font-semibold mt-2">✅ Kamu telah disetujui sebagai peserta</p>
+                        <a href="{{ route('user.qrcode') }}"
+                           class="inline-block mt-2 bg-indigo-600 hover:bg-indigo-700 text-black px-4 py-2 rounded">
+                            🎫 Tampilkan QR Code
+                        </a>
                     @endif
                 @else
                     <form method="POST" action="{{ route('user.pelatihan.daftar', $jadwal->id) }}">
