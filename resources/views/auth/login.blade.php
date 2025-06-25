@@ -1,47 +1,92 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - Portal Kemendagri</title>
+    <link rel="icon" href="{{ asset('img/Subtract.png') }}" type="image/png" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #1e3a8a, #2563eb);
+        }
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-gradient {
+            background: linear-gradient(to bottom right, #3b82f6, #60a5fa);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen px-4 text-white">
+
+     <!-- Tombol Kembali -->
+    <a href="{{ url('/') }}" class="absolute top-6 left-6 text-white text-sm font-semibold flex items-center hover:underline">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        Kembali ke Beranda
+    </a>
+
+    <!-- Login Card -->
+    <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl fade-in card-gradient backdrop-blur-sm">
+        <div class="text-center mb-6">
+            <img src="{{ asset('img/Subtract.png') }}" alt="Logo Kemendagri" class="mx-auto w-16 mb-3">
+            <h2 class="text-2xl font-bold">Selamat Datang</h2>
+            <p class="text-sm text-white/90">Masuk ke portal Kemendagri</p>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-white">Email</label>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
+                       class="w-full mt-1 px-4 py-2 rounded-lg bg-white/90 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                @error('email')
+                    <span class="text-red-200 text-xs">{{ $message }}</span>
+                @enderror
+            </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium text-white">Kata Sandi</label>
+                <input type="password" id="password" name="password" required
+                       class="w-full mt-1 px-4 py-2 rounded-lg bg-white/90 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                @error('password')
+                    <span class="text-red-200 text-xs">{{ $message }}</span>
+                @enderror
+            </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+            <div class="flex items-center justify-between text-sm text-white mb-6">
+                <label class="flex items-center">
+                    <input type="checkbox" name="remember" class="mr-2">
+                    Ingat Saya
+                </label>
+                @if (Route::has('password.request'))
+                    <a href="{{ route('password.request') }}" class="text-yellow-300 hover:underline">Lupa Sandi?</a>
+                @endif
+            </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+            <button type="submit"
+                    class="w-full py-2 bg-yellow-400 text-blue-900 font-semibold rounded-full hover:bg-yellow-300 transition">
+                Masuk
+            </button>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+            <p class="text-sm text-center text-white mt-4">
+                Belum punya akun?
+                <a href="{{ route('register') }}" class="text-yellow-300 hover:underline">Daftar Sekarang</a>
+            </p>
+        </form>
+    </div>
+
+</body>
+</html>
