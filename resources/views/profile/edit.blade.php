@@ -20,7 +20,7 @@
 <body class="min-h-screen text-white">
 
     <!-- Header -->
-    <header class="bg-gradient-to-r from-blue-800 to-blue-600 shadow-md">
+    <header class="bg-gradient-to-r from-blue-800 to-yellow-600 shadow-md">
     <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         <div class="flex items-center space-x-3">
             <img src="{{ asset('img/Subtract.png') }}" alt="Logo" class="w-8 h-8">

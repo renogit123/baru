@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-user-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold text-gray-800">QR Code Kehadiran</h2>
     </x-slot>
@@ -16,4 +16,4 @@
             <p class="text-gray-500 text-sm mt-2">QR ini hanya untuk pelatihan: <br><strong>{{ $register->jadwal->judul ?? '-' }}</strong></p>
         @endif
     </div>
-</x-app-layout>
+</x-user-layout>

@@ -40,4 +40,25 @@ class KecamatanController extends Controller
 
         return redirect()->route('admin.wilayah')->with('success', 'Kecamatan berhasil dihapus.');
     }
+
+    public function index(Request $request)
+{
+    $search = $request->input('search_kecamatan');
+
+    $kecamatans = Kecamatan::with('kabupatenKota')
+        ->when($search, function ($query, $search) {
+            return $query->where('nama', 'like', "%{$search}%");
+        })
+        ->paginate(10);
+
+    $kabupatens = \App\Models\KabupatenKota::all();
+    $editKecamatan = null;
+
+    if ($request->has('edit_kecamatan')) {
+        $editKecamatan = Kecamatan::find($request->input('edit_kecamatan'));
+    }
+
+    return view('admin.kecamatan.index', compact('kecamatans', 'kabupatens', 'editKecamatan'));
+}
+
 }

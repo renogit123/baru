@@ -1,27 +1,29 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold text-gray-800">
-            Scan Kehadiran Peserta
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-white">📷 Scan Kehadiran Peserta</h2>
+            <a href="{{ route('admin.jadwal-pelatihan.index') }}"
+               class="text-sm text-white/70 hover:underline">⬅️ Kembali</a>
+        </div>
     </x-slot>
 
-    <div class="p-6 bg-white shadow rounded space-y-6">
+    <div class="p-6 bg-white/5 text-white rounded shadow border border-white/10 backdrop-blur space-y-6">
         <audio id="beep" src="https://www.soundjay.com/button/beep-07.mp3" preload="auto"></audio>
 
-        <p class="text-gray-600">Arahkan kamera ke barcode peserta atau unggah dari galeri.</p>
+        <p class="text-white/80">Arahkan kamera ke barcode peserta atau unggah dari galeri.</p>
 
         {{-- Scanner Kamera --}}
-        <div id="reader" class="w-full max-w-md mx-auto border rounded"></div>
+        <div id="reader" class="w-full max-w-md mx-auto border border-white/20 rounded bg-black/20"></div>
 
         {{-- Form otomatis submit --}}
-        <form id="scan-form" action="{{ route('admin.scan.proses') }}" method="POST" class="mt-4">
+        <form id="scan-form" action="{{ route('admin.scan.proses') }}" method="POST">
             @csrf
             <input type="hidden" id="scan_result" name="scan_result">
         </form>
 
         {{-- Upload QR dari galeri --}}
         <div class="mt-6">
-            <label class="block text-gray-700 mb-1">Atau unggah gambar QR dari galeri:</label>
+            <label class="block text-white/80 mb-1">Atau unggah gambar QR dari galeri:</label>
             <input type="file" accept="image/*" id="upload-qr" class="mb-2">
             <img id="preview" src="#" class="w-40 h-auto hidden border rounded" alt="Preview QR">
         </div>
@@ -31,17 +33,17 @@
 
         {{-- Tampilkan hasil scan sebelumnya --}}
         @if(session('success'))
-            <div class="text-green-600 border border-green-300 bg-green-100 rounded p-3">
+            <div class="text-green-300 border border-green-500/30 bg-green-800/30 rounded p-3">
                 ✅ {{ session('success') }}
             </div>
 
             @if(session('peserta'))
                 @php $peserta = session('peserta'); @endphp
-                <div class="mt-4 p-4 border rounded bg-gray-50">
-                    <h3 class="font-bold mb-2 text-lg text-gray-800">Peserta Terakhir:</h3>
+                <div class="mt-4 p-4 border rounded border-white/20 bg-white/5">
+                    <h3 class="font-bold mb-2 text-lg text-white">Peserta Terakhir:</h3>
                     <p><strong>Nama:</strong> {{ $peserta->user->biodata->nama ?? $peserta->user->name }}</p>
                     <p><strong>NIK:</strong> {{ $peserta->user->biodata->nik ?? '-' }}</p>
-                    <p><strong>Status Kehadiran:</strong> <span class="text-green-600 font-semibold">✅ Hadir</span></p>
+                    <p><strong>Status Kehadiran:</strong> <span class="text-green-400 font-semibold">✅ Hadir</span></p>
                 </div>
             @endif
         @endif
@@ -91,8 +93,6 @@
                 .catch(err => {
                     alert("❌ Gagal membaca QR dari gambar: " + err);
                 });
-
-                
         });
     </script>
-</x-app-layout>
+</x-admin-layout>

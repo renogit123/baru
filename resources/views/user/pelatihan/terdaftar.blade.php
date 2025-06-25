@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-user-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold">Tiket Pelatihan</h2>
     </x-slot>
@@ -14,4 +14,4 @@
             <p class="text-sm text-gray-500 mt-2">Tunjukkan QR ini ke petugas saat hadir</p>
         </div>
     </div>
-</x-app-layout>
+</x-user-layout>

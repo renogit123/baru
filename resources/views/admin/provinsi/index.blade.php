@@ -1,19 +1,55 @@
 <x-admin-layout>
-    <h2 class="text-xl font-semibold text-white">Lihat Semua Wilayah</h2>
+    <h2 class="text-xl font-semibold text-white">Manajemen Wilayah</h2>
 
     <div class="p-6 space-y-10 bg-gradient-to-br from-[#0a1f44] to-[#1e40af] min-h-screen text-white">
+        {{-- ========== FORM TAMBAH / EDIT ========== --}}
         @foreach ([
-            ['title' => 'Daftar Wilayah (Kelurahan / Desa)', 'items' => $kelurahans, 'cols' => [
-                'nama' => 'Nama',
-                'kode' => 'Kode',
-                'kecamatan.nama' => 'Kecamatan',
-                'kecamatan.kabupatenKota.nama' => 'Kabupaten/Kota',
-                'kecamatan.kabupatenKota.provinsi.nama' => 'Provinsi'
-            ], 'action' => 'kelurahan', 'editVar' => 'edit_kelurahan', 'searchKey' => 'search_kelurahan'],
+            ['title' => 'Provinsi', 'fields' => ['nama' => 'Nama Provinsi', 'kode' => 'Kode Provinsi'], 'action' => 'provinsi', 'editVar' => 'editProvinsi', 'related' => []],
+        ] as $section)
+            @php $editItem = ${$section['editVar']} ?? null; @endphp
+            <div class="bg-white/5 p-6 rounded-lg shadow border border-white/10 backdrop-blur">
+                <h3 class="text-lg font-semibold mb-4 text-white">{{ $section['title'] }}</h3>
+                <form method="POST" action="{{ isset($editItem) ? route('admin.' . $section['action'] . '.update', $editItem->id) : route('admin.' . $section['action'] . '.store') }}">
+                    @csrf
+                    @if(isset($editItem)) @method('PUT') @endif
+                    <div class="grid md:grid-cols-2 gap-4">
+                        @foreach ($section['fields'] as $name => $label)
+                            <div>
+                                <label class="block text-sm font-medium text-white/90">{{ $label }}</label>
+                                @if(Str::endsWith($name, '_id'))
+                                    <select name="{{ $name }}" class="mt-1 block w-full border border-gray-300 rounded-md text-black">
+                                        <option value="">-- {{ $label }} --</option>
+                                        @foreach ($section['related'] as $rel)
+                                            <option value="{{ $rel->id }}" {{ old($name, $editItem->$name ?? '') == $rel->id ? 'selected' : '' }}>
+                                                {{ $rel->nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <input type="text" name="{{ $name }}" value="{{ old($name, $editItem->$name ?? '') }}" class="mt-1 block w-full border border-gray-300 rounded-md text-black">
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="mt-4">
+                        <button class="bg-yellow-400 text-blue-900 px-4 py-2 rounded hover:bg-yellow-300">
+                            {{ isset($editItem) ? 'Update' : 'Tambah' }}
+                        </button>
+                        @if(isset($editItem))
+                            <a href="{{ route('admin.wilayah') }}" class="ml-3 text-sm text-white/70 hover:underline">Batal</a>
+                        @endif
+                    </div>
+                </form>
+            </div>
+        @endforeach
+
+        {{-- ========== TABEL DATA ========== --}}
+        @foreach ([
+            ['title' => 'Daftar Provinsi', 'items' => $provinsis, 'cols' => ['nama' => 'Nama', 'kode' => 'Kode'], 'action' => 'provinsi', 'editVar' => 'edit_provinsi', 'searchKey' => 'search_provinsi'],
         ] as $table)
             <div
                 x-data="{
-                    show: JSON.parse(localStorage.getItem('{{ $table['editVar'] }}_show') ?? 'true'),
+                    show: JSON.parse(localStorage.getItem('{{ $table['editVar'] }}_show') ?? 'false'),
                     toggle() {
                         this.show = !this.show;
                         localStorage.setItem('{{ $table['editVar'] }}_show', JSON.stringify(this.show));
@@ -22,7 +58,7 @@
                 class="bg-white/5 p-6 rounded-lg shadow border border-white/10 backdrop-blur"
             >
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold">{{ $table['title'] }}</h3>
+                    <h3 class="text-lg font-semibold text-white">{{ $table['title'] }}</h3>
                     <button @click="toggle" class="text-sm px-3 py-1 bg-white/10 hover:bg-white/20 rounded">
                         <span x-show="!show">📂 Tampilkan</span>
                         <span x-show="show">📁 Sembunyikan</span>

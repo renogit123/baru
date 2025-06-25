@@ -35,15 +35,24 @@ Route::middleware('auth')->group(function () {
 });
 
 // ================= ADMIN =================
-Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
+    Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () 
+{
     // Dashboard & Wilayah
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/wilayah', [AdminController::class, 'wilayah'])->name('wilayah');
 
     // Wilayah CRUD (tanpa index/edit/create/show)
+    // Provinsi
+    Route::get('/provinsi', [ProvinsiController::class, 'index'])->name('provinsi.index');
     Route::resource('provinsi', ProvinsiController::class)->only(['store', 'update', 'destroy']);
+    // Kabupaten
+    Route::get('/kabupaten-kota', [KabupatenKotaController::class, 'index'])->name('kabupaten-kota.index');
     Route::resource('kabupaten-kota', KabupatenKotaController::class)->only(['store', 'update', 'destroy']);
+    // Kecamatan
+    Route::get('/kecamatan', [KecamatanController::class, 'index'])->name('kecamatan.index');
     Route::resource('kecamatan', KecamatanController::class)->only(['store', 'update', 'destroy']);
+    // Kelurahan
+    Route::get('/kelurahan', [KelurahanController::class, 'index'])->name('kelurahan.index');
     Route::resource('kelurahan', KelurahanController::class)->only(['store', 'update', 'destroy']);
 
     // Biodata User
@@ -86,7 +95,7 @@ Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
     Route::get('/pelatihan', [PelatihanUserController::class, 'index'])->name('pelatihan.index');
     Route::post('/pelatihan/{id}/daftar', [PelatihanUserController::class, 'daftar'])->name('pelatihan.daftar');
 });
-Route::get('/user/barcode', [\App\Http\Controllers\User\BarcodeController::class, 'index'])->name('user.barcode');
+Route::get('/user/barcode', [BarcodeController::class, 'index'])->name('user.barcode');
 Route::get('/admin/scan-kehadiran/{id}', [RegisterPelatihanController::class, 'hadir'])->name('admin.absen.hadir');
 // Halaman scan QR (user)
 Route::get('/admin/scan-absen', [ScanAbsenController::class, 'form'])->name('admin.scan');
@@ -95,7 +104,7 @@ Route::get('/admin/scan-absen', [App\Http\Controllers\Admin\ScanAbsenController:
 
 Route::get('/user/barcode', [BarcodeController::class, 'index'])->name('user.qrcode');
 Route::post('/admin/scan-absen', [ScanAbsenController::class, 'proses'])->name('admin.scan.proses');
-Route::get('/admin/kehadiran', [\App\Http\Controllers\Admin\ScanAbsenController::class, 'daftarHadir'])->name('admin.kehadiran');
+Route::get('/admin/kehadiran', [ScanAbsenController::class, 'daftarHadir'])->name('admin.kehadiran');
 
 
 

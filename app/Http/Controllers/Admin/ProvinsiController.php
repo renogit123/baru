@@ -17,7 +17,7 @@ class ProvinsiController extends Controller
 
         Provinsi::create($request->only('nama', 'kode'));
 
-        return redirect()->route('admin.wilayah')->with('success', 'Provinsi berhasil ditambahkan.');
+        return redirect()->route('admin.provinsi.index')->with('success', 'Provinsi berhasil ditambahkan.');
     }
 
     public function update(Request $request, Provinsi $provinsi)
@@ -29,13 +29,20 @@ class ProvinsiController extends Controller
 
         $provinsi->update($request->only('nama', 'kode'));
 
-        return redirect()->route('admin.wilayah')->with('success', 'Provinsi berhasil diperbarui.');
+        return redirect()->route('admin.provinsi.index')->with('success', 'Provinsi berhasil diperbarui.');
     }
 
     public function destroy(Provinsi $provinsi)
     {
         $provinsi->delete();
 
-        return redirect()->route('admin.wilayah')->with('success', 'Provinsi berhasil dihapus.');
+        return redirect()->route('admin.provinsi.index')->with('success', 'Provinsi berhasil dihapus.');
     }
+
+    public function index()
+{
+    $provinsis = Provinsi::latest()->paginate(10);
+    return view('admin.provinsi.index', compact('provinsis'));
+}
+
 }

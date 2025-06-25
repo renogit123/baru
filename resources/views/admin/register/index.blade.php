@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold text-gray-800">Jadwal Pelatihan</h2>
     </x-slot>
@@ -48,4 +48,4 @@
             <p class="text-gray-500">Belum ada pelatihan tersedia saat ini.</p>
         @endforelse
     </div>
-</x-app-layout>
+</x-admin-layout>

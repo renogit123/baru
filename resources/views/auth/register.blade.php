@@ -4,31 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar - Portal Kemendagri</title>
-    <link rel="icon" href="{{ asset('img/Subtract.png') }}" type="image/png" rel="stylesheet">
+    <link rel="icon" href="{{ asset('img/Subtract.png') }}" type="image/png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(to bottom right, #1e3a8a, #2563eb); /* Gradasi background */
+            background: linear-gradient(to bottom right, #0a1f44, #1e40af); /* biru gelap */
         }
 
         .fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
+            animation: fadeIn 0.8s ease-out forwards;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .card-gradient {
-            background: linear-gradient(to bottom right, #3b82f6, #60a5fa); /* Gradasi biru terang */
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen px-4 text-white">
 
-     <!-- Tombol Kembali -->
+    <!-- Tombol Kembali -->
     <a href="{{ url('/') }}" class="absolute top-6 left-6 text-white text-sm font-semibold flex items-center hover:underline">
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2"
              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -38,9 +41,9 @@
     </a>
 
     <!-- Register Card -->
-    <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl fade-in card-gradient backdrop-blur-sm">
+    <div class="w-full max-w-md p-8 rounded-2xl shadow-xl fade-in card-gradient">
         <div class="text-center mb-6">
-            <img src="{{ asset('img/Subtract.png') }}" alt="Logo Kemendagri" class="mx-auto w-16 mb-3">
+            <img src="{{ asset('img/Subtract.png') }}" alt="Logo Kemendagri" class="mx-auto w-16 mb-3 drop-shadow-md">
             <h2 class="text-2xl font-bold">Pendaftaran Pengguna</h2>
             <p class="text-sm text-white/90">Silakan isi formulir untuk membuat akun Anda</p>
         </div>

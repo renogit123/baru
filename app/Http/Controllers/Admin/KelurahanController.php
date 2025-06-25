@@ -40,4 +40,25 @@ class KelurahanController extends Controller
 
         return redirect()->route('admin.wilayah')->with('success', 'Kelurahan berhasil dihapus.');
     }
+
+    public function index(Request $request)
+{
+    $search = $request->input('search_kelurahan');
+
+    $kelurahans = Kelurahan::with('kecamatan.kabupatenKota.provinsi')
+        ->when($search, function ($query, $search) {
+            return $query->where('nama', 'like', "%{$search}%");
+        })
+        ->paginate(10);
+
+    $kecamatans = \App\Models\Kecamatan::with('kabupatenKota')->get();
+    $editKelurahan = null;
+
+    if ($request->has('edit_kelurahan')) {
+        $editKelurahan = Kelurahan::find($request->input('edit_kelurahan'));
+    }
+
+    return view('admin.kelurahan.index', compact('kelurahans', 'kecamatans', 'editKelurahan'));
+}
+
 }
