@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use App\Models\JadwalPelatihanBaru;
 use App\Http\Controllers\Controller;
 use App\Models\JadwalPelatihan;
 use Illuminate\Http\Request;
@@ -16,7 +16,8 @@ class JadwalPelatihanController extends Controller
 
     public function create()
     {
-        return view('admin.jadwal.create');
+        $judulList = JadwalPelatihanBaru::all();
+        return view('admin.jadwal.create', compact('judulList'));
     }
 
     public function store(Request $request)

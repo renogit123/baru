@@ -10,8 +10,16 @@
         <form method="POST" action="{{ route('admin.jadwal-pelatihan.store') }}">
             @csrf
 
+            {{-- <x-input-label for="judul" value="Judul Pelatihan" class="text-white/80" />
+            <x-text-input name="judul" class="w-full mb-4 text-black" value="{{ old('judul') }}" /> --}}
+
             <x-input-label for="judul" value="Judul Pelatihan" class="text-white/80" />
-            <x-text-input name="judul" class="w-full mb-4 text-black" value="{{ old('judul') }}" />
+<select name="judul" class="w-full mb-4 text-black rounded border-gray-300" required>
+    <option value="">-- Pilih Judul Pelatihan --</option>
+    @foreach ($judulList as $judul)
+        <option value="{{ $judul->judul }}">{{ $judul->judul }}</option>
+    @endforeach
+</select>
 
             <x-input-label for="tgl_mulai" value="Tanggal Mulai" class="text-white/80" />
             <x-text-input name="tgl_mulai" type="date" class="w-full mb-4 text-black" value="{{ old('tgl_mulai') }}" />

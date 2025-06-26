@@ -53,13 +53,17 @@
                     </svg>
                 </button>
                 <ul x-show="open" x-transition class="pl-4 mt-1 space-y-1">
-                    <li><a href="{{ route('admin.jadwal-pelatihan.index') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Jadwal Pelatihan</a></li>
+                    <li><a href="{{ route('admin.jadwal-pelatihan.index') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Buat Pelatihan</a></li>
+                    
+                    {{-- ✅ Tambah Judul Pelatihan Baru --}}
+                    <li><a href="{{ route('admin.jadwal.JadwalPelatihanBaru') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Tambah Judul Pelatihan</a></li>
+            
                     <li><a href="{{ route('admin.scan') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Scan Kehadiran</a></li>
                     <li><a href="{{ route('admin.kehadiran') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Lihat Kehadiran</a></li>
                 </ul>
             </li>
-        </ul>
-    </div>
+            
+        </div>
 
     <!-- Bawah: Profile -->
     <div class="px-6 py-4 border-t border-gray-700">
@@ -70,4 +74,5 @@
             <button type="submit" class="w-full text-left px-3 py-1 hover:bg-gray-700 rounded">🚪 Keluar</button>
         </form>
     </div>
+
 </nav>

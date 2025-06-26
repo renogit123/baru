@@ -17,6 +17,9 @@ use App\Http\Controllers\Admin\JadwalPelatihanController;
 use App\Http\Controllers\Admin\RegisterPelatihanController;
 use App\Http\Controllers\user\BarcodeController;
 use App\Http\Controllers\Admin\ScanAbsenController;
+use App\Http\Controllers\Admin\JadwalPelatihanBaruController;
+use App\Http\Controllers\WilayahController;
+
 
 // Halaman awal
 Route::get('/', fn() => view('welcome'));
@@ -106,7 +109,41 @@ Route::get('/user/barcode', [BarcodeController::class, 'index'])->name('user.qrc
 Route::post('/admin/scan-absen', [ScanAbsenController::class, 'proses'])->name('admin.scan.proses');
 Route::get('/admin/kehadiran', [ScanAbsenController::class, 'daftarHadir'])->name('admin.kehadiran');
 
+Route::get('/admin/jadwal', [JadwalPelatihanBaruController::class, 'JadwalPelatihanBaru'])->name('admin.jadwal.JadwalPelatihanBaru');
+Route::resource('jadwal', JadwalPelatihanBaruController::class)->names('admin.jadwal');
 
+Route::get('/get-kabupaten/{provinsi_id}', [WilayahController::class, 'getKabupaten']);
+Route::get('/get-kecamatan/{kabupaten_id}', [WilayahController::class, 'getKecamatan']);
+Route::get('/get-kelurahan/{kecamatan_id}', [WilayahController::class, 'getKelurahan']);
+
+// Tampilkan form
+Route::get('/biodata', [BiodataController::class, 'form'])->name('user.biodata.form');
+
+// Simpan data
+Route::post('/biodata', [BiodataController::class, 'store'])->name('user.biodata.store');
+
+Route::middleware(['auth', 'verified'])->prefix('user')->name('user.')->group(function () {
+    Route::get('/biodata', [\App\Http\Controllers\User\BiodataController::class, 'create'])->name('biodata.create');
+    Route::post('/biodata', [\App\Http\Controllers\User\BiodataController::class, 'store'])->name('biodata.store');
+});
+
+Route::get('/api/desa/{id}', function ($id) {
+    $desa = \App\Models\Kelurahan::with('kecamatan.kabupatenKota.provinsi')->find($id);
+
+    if (!$desa) {
+        return response()->json(['error' => 'Desa tidak ditemukan'], 404);
+    }
+
+    return response()->json([
+        'provinsi'   => $desa->kecamatan->kabupatenKota->provinsi->nama ?? '',
+        'kabupaten'  => $desa->kecamatan->kabupatenKota->nama ?? '',
+        'kecamatan'  => $desa->kecamatan->nama ?? '',
+        'desa'       => $desa->nama ?? '',
+        'kode_desa'  => $desa->kode ?? '', // <== PENTING: kode, bukan kode_desa
+    ]);
+});
+
+Route::delete('/admin/user/biodata/{id}', [BiodataUserController::class, 'destroy'])->name('admin.user.biodata.destroy');
 
 // Auth scaffolding
 require __DIR__.'/auth.php';

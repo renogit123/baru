@@ -35,11 +35,21 @@
                                 <td class="px-4 py-2">{{ $user->biodata->nomor_sk_jabatan }}</td>
                                 <td class="px-4 py-2">{{ $user->biodata->pendidikan }}</td>
                                 <td class="px-4 py-2">{{ $user->biodata->no_telp }}</td>
-                                <td class="px-4 py-2">
+                                <td class="px-4 py-2 space-y-1">
                                     <a href="{{ route('admin.user.biodata.edit', $user->id) }}"
-                                       class="text-yellow-300 hover:underline text-xs">
+                                       class="text-yellow-300 hover:underline text-xs block">
                                         ✏️ Edit
                                     </a>
+
+                                    <form action="{{ route('admin.user.biodata.destroy', $user->id) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Yakin ingin menghapus biodata ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-400 hover:underline text-xs">
+                                            🗑️ Hapus
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @endif
