@@ -1,4 +1,4 @@
-<!-- resources/views/sertifikat/template.blade.php -->
+{{-- <!-- resources/views/sertifikat/template.blade.php -->
 
 <!DOCTYPE html>
 <html>
@@ -45,4 +45,4 @@
         </div>
     </div>
 </body>
-</html>
+</html> --}}

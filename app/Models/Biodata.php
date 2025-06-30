@@ -31,6 +31,7 @@ class Biodata extends Model
         'nomor_sk_jabatan',
         'pendidikan',
         'no_telp',
+        'is_approved',
     ];
 
     public function user()
@@ -38,6 +39,10 @@ class Biodata extends Model
         return $this->belongsTo(User::class);
     }
     
+    protected $casts = [
+        'is_approved' => 'boolean',
+    ];
+
 public function kelurahan()
 {
     return $this->belongsTo(Kelurahan::class, 'id_desa');

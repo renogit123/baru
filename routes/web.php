@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\ScanAbsenController;
 use App\Http\Controllers\Admin\JadwalPelatihanBaruController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\User\SertifikatController;
+use App\Http\Controllers\Admin\BiodataApprovalController;
+
 
 
 // Halaman awal
@@ -149,6 +151,12 @@ Route::get('/api/desa/{id}', function ($id) {
         'kode_desa'  => $desa->kode ?? '', // <== PENTING: kode, bukan kode_desa
     ]);
 });
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/sertifikat/{id}', [\App\Http\Controllers\User\SertifikatController::class, 'generate'])->name('sertifikat.generate');
+});
+
+Route::post('/admin/biodata/acc/{id}', [BiodataApprovalController::class, 'approve'])->name('admin.biodata.approve');
 
 
 Route::delete('/admin/user/biodata/{id}', [BiodataUserController::class, 'destroy'])->name('admin.user.biodata.destroy');
