@@ -138,5 +138,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/admin/sertifikat/update', [SertifikatTextController::class, 'update'])->name('admin.sertifikat.update');
 });
 
+Route::put('/admin/pelatihan/{id}/reject', [RegisterPelatihanController::class, 'reject'])->name('admin.pelatihan.reject');
+
+
 // Auth scaffolding
 require __DIR__ . '/auth.php';

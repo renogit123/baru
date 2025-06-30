@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\RegisterPelatihan;
 use Illuminate\Http\Request;
+use App\Models\RegisterPelatihan;
 use App\Models\JadwalPelatihan;
 use App\Models\User;
 
@@ -15,7 +15,7 @@ class RegisterPelatihanController extends Controller
         $registers = RegisterPelatihan::with(['user.biodata', 'jadwal'])->get();
         return view('admin.register.index', compact('registers'));
     }
-    
+
     public function acc($id)
     {
         $register = RegisterPelatihan::findOrFail($id);
@@ -25,15 +25,21 @@ class RegisterPelatihanController extends Controller
         return redirect()->back()->with('success', 'Peserta berhasil di-ACC.');
     }
 
+    public function reject($id)
+    {
+        $pendaftar = RegisterPelatihan::findOrFail($id);
+        $pendaftar->status_peserta = 'rejected';
+        $pendaftar->save();
+
+        return redirect()->back()->with('success', 'Peserta berhasil ditolak.');
+    }
+
     public function hadir($id)
-{
-    $reg = \App\Models\RegisterPelatihan::findOrFail($id);
-    $reg->status_kehadiran = 'hadir';
-    $reg->save();
+    {
+        $reg = RegisterPelatihan::findOrFail($id);
+        $reg->status_kehadiran = 'hadir';
+        $reg->save();
 
-    return redirect()->back()->with('success', 'Peserta berhasil absen.');
-}
-
-
-    
+        return redirect()->back()->with('success', 'Peserta berhasil absen.');
+    }
 }

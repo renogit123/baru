@@ -6,7 +6,6 @@
     <div class="p-6 bg-white shadow rounded space-y-4">
         <h3 class="text-lg font-semibold mb-4">Daftar Pelatihan yang Tersedia</h3>
 
-        {{-- Pesan Sukses/Error --}}
         @if(session('success'))
             <div class="text-green-600 mb-3">{{ session('success') }}</div>
         @endif
@@ -23,6 +22,7 @@
             @php
                 $register = $jadwal->registers->firstWhere('user_id', $userId);
             @endphp
+
             <div class="border p-4 rounded mb-4">
                 <h4 class="text-lg font-bold">{{ $jadwal->judul }}</h4>
                 <p class="text-gray-600">Tanggal: {{ $jadwal->tgl_mulai }} s/d {{ $jadwal->tgl_selesai }}</p>
@@ -34,9 +34,17 @@
                     @elseif($register->status_peserta === 'approved')
                         <p class="text-green-600 font-semibold mt-2">✅ Kamu telah disetujui sebagai peserta</p>
                         <a href="{{ route('user.qrcode') }}"
-                           class="inline-block mt-2 bg-indigo-600 hover:bg-indigo-700 text-black px-4 py-2 rounded">
+                           class="inline-block mt-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">
                             🎫 Tampilkan QR Code
                         </a>
+                    @elseif($register->status_peserta === 'rejected')
+                        <form method="POST" action="{{ route('user.pelatihan.daftar', $jadwal->id) }}">
+                            @csrf
+                            <button type="submit"
+                                    class="mt-2 inline-block bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded">
+                                🔁 Daftar Ulang
+                            </button>
+                        </form>
                     @endif
                 @else
                     <form method="POST" action="{{ route('user.pelatihan.daftar', $jadwal->id) }}">

@@ -42,16 +42,29 @@
                             <td class="px-4 py-2">
                                 @if($pendaftar->status_peserta === 'approved')
                                     <span class="text-green-400 font-semibold">✅ Disetujui</span>
+                                @elseif($pendaftar->status_peserta === 'rejected')
+                                    <span class="text-red-400 font-semibold">❌ Ditolak</span>
                                 @else
-                                    <form method="POST" action="{{ route('admin.pelatihan.acc', $pendaftar->id) }}">
-                                        @csrf
-                                        @method('PUT')
-                                        <button 
-                                            class="text-green-300 hover:underline"
-                                            onclick="this.disabled=true; this.innerText='Menyetujui...'; this.form.submit();">
-                                            ✅ ACC
-                                        </button>
-                                    </form>
+                                    <div class="flex gap-2">
+                                        <form method="POST" action="{{ route('admin.pelatihan.acc', $pendaftar->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <button 
+                                                class="text-green-300 hover:underline"
+                                                onclick="this.disabled=true; this.innerText='Menyetujui...'; this.form.submit();">
+                                                ✅ ACC
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('admin.pelatihan.reject', $pendaftar->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <button 
+                                                class="text-red-300 hover:underline"
+                                                onclick="this.disabled=true; this.innerText='Menolak...'; this.form.submit();">
+                                                ❌ Tolak
+                                            </button>
+                                        </form>
+                                    </div>
                                 @endif
                             </td>
                         </tr>
