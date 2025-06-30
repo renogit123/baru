@@ -15,6 +15,11 @@
                class="inline-block px-5 py-2 bg-yellow-500 text-sky-900 font-semibold rounded hover:bg-yellow-400 transition text-center">
                 📅 Lihat Jadwal Pelatihan
             </a>
+            <a href="{{ route('sertifikat.generate', auth()->user()->id) }}" target="_blank"
+   class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+   Unduh Sertifikat
+</a>
+
         </div>
     </div>
 </x-user-layout>

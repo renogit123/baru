@@ -19,6 +19,7 @@ use App\Http\Controllers\user\BarcodeController;
 use App\Http\Controllers\Admin\ScanAbsenController;
 use App\Http\Controllers\Admin\JadwalPelatihanBaruController;
 use App\Http\Controllers\WilayahController;
+use App\Http\Controllers\User\SertifikatController;
 
 
 // Halaman awal
@@ -98,6 +99,12 @@ Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
     Route::get('/pelatihan', [PelatihanUserController::class, 'index'])->name('pelatihan.index');
     Route::post('/pelatihan/{id}/daftar', [PelatihanUserController::class, 'daftar'])->name('pelatihan.daftar');
 });
+
+// Sertifikat
+Route::get('/sertifikat/{id}', [SertifikatController::class, 'generate'])
+->name('sertifikat.generate')
+->middleware('auth');
+// Barcode
 Route::get('/user/barcode', [BarcodeController::class, 'index'])->name('user.barcode');
 Route::get('/admin/scan-kehadiran/{id}', [RegisterPelatihanController::class, 'hadir'])->name('admin.absen.hadir');
 // Halaman scan QR (user)
@@ -123,8 +130,8 @@ Route::get('/biodata', [BiodataController::class, 'form'])->name('user.biodata.f
 Route::post('/biodata', [BiodataController::class, 'store'])->name('user.biodata.store');
 
 Route::middleware(['auth', 'verified'])->prefix('user')->name('user.')->group(function () {
-    Route::get('/biodata', [\App\Http\Controllers\User\BiodataController::class, 'create'])->name('biodata.create');
-    Route::post('/biodata', [\App\Http\Controllers\User\BiodataController::class, 'store'])->name('biodata.store');
+    Route::get('/biodata', [BiodataController::class, 'create'])->name('biodata.create');
+    Route::post('/biodata', [BiodataController::class, 'store'])->name('biodata.store');
 });
 
 Route::get('/api/desa/{id}', function ($id) {
@@ -142,6 +149,7 @@ Route::get('/api/desa/{id}', function ($id) {
         'kode_desa'  => $desa->kode ?? '', // <== PENTING: kode, bukan kode_desa
     ]);
 });
+
 
 Route::delete('/admin/user/biodata/{id}', [BiodataUserController::class, 'destroy'])->name('admin.user.biodata.destroy');
 
