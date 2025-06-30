@@ -23,15 +23,20 @@ use App\Http\Controllers\User\SertifikatController;
 use App\Http\Controllers\Admin\BiodataApprovalController;
 use App\Http\Controllers\Admin\SertifikatTextController;
 
-
-
-
 // Halaman awal
-Route::get('/', fn() => view('welcome'));
+Route::get('/', fn () => view('welcome'));
 
 // Redirect dashboard sesuai role
 Route::get('/dashboard', function () {
-    return redirect()->route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'user.dashboard');
+    if (Auth::check()) {
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    }
+
+    return redirect('/login');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Middleware umum setelah login
@@ -43,32 +48,26 @@ Route::middleware('auth')->group(function () {
 });
 
 // ================= ADMIN =================
-    Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () 
-{
-    // Dashboard & Wilayah
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/wilayah', [AdminController::class, 'wilayah'])->name('wilayah');
 
-    // Wilayah CRUD (tanpa index/edit/create/show)
-    // Provinsi
     Route::get('/provinsi', [ProvinsiController::class, 'index'])->name('provinsi.index');
     Route::resource('provinsi', ProvinsiController::class)->only(['store', 'update', 'destroy']);
-    // Kabupaten
+
     Route::get('/kabupaten-kota', [KabupatenKotaController::class, 'index'])->name('kabupaten-kota.index');
     Route::resource('kabupaten-kota', KabupatenKotaController::class)->only(['store', 'update', 'destroy']);
-    // Kecamatan
+
     Route::get('/kecamatan', [KecamatanController::class, 'index'])->name('kecamatan.index');
     Route::resource('kecamatan', KecamatanController::class)->only(['store', 'update', 'destroy']);
-    // Kelurahan
+
     Route::get('/kelurahan', [KelurahanController::class, 'index'])->name('kelurahan.index');
     Route::resource('kelurahan', KelurahanController::class)->only(['store', 'update', 'destroy']);
 
-    // Biodata User
     Route::get('/biodata-user', [BiodataUserController::class, 'index'])->name('user.biodata.index');
     Route::get('/biodata-user/{id}/edit', [BiodataUserController::class, 'edit'])->name('user.biodata.edit');
     Route::put('/biodata-user/{id}', [BiodataUserController::class, 'update'])->name('user.biodata.update');
 
-    // Pelatihan CRUD
     Route::prefix('pelatihan')->name('pelatihan.')->group(function () {
         Route::get('/', [PelatihanController::class, 'index'])->name('index');
         Route::get('/create', [PelatihanController::class, 'create'])->name('create');
@@ -79,7 +78,6 @@ Route::middleware('auth')->group(function () {
         Route::put('/{register}/acc', [RegisterPelatihanController::class, 'acc'])->name('acc');
     });
 
-    // Jadwal Pelatihan
     Route::prefix('jadwal-pelatihan')->name('jadwal-pelatihan.')->group(function () {
         Route::get('/', [JadwalPelatihanController::class, 'index'])->name('index');
         Route::get('/create', [JadwalPelatihanController::class, 'create'])->name('create');
@@ -90,7 +88,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [JadwalPelatihanController::class, 'destroy'])->name('destroy');
     });
 
-    // Register pelatihan peserta (khusus admin)
     Route::get('/register', [RegisterPelatihanController::class, 'index'])->name('register.index');
     Route::put('/register/acc/{id}', [RegisterPelatihanController::class, 'acc'])->name('register.acc');
 });
@@ -105,18 +102,11 @@ Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
 });
 
 // Sertifikat
-Route::get('/sertifikat/{id}', [SertifikatController::class, 'generate'])
-->name('sertifikat.generate')
-->middleware('auth');
-// Barcode
-Route::get('/user/barcode', [BarcodeController::class, 'index'])->name('user.barcode');
-Route::get('/admin/scan-kehadiran/{id}', [RegisterPelatihanController::class, 'hadir'])->name('admin.absen.hadir');
-// Halaman scan QR (user)
-Route::get('/admin/scan-absen', [ScanAbsenController::class, 'form'])->name('admin.scan');
-Route::post('/admin/scan-absen', [ScanAbsenController::class, 'proses'])->name('admin.scan.proses');
-Route::get('/admin/scan-absen', [App\Http\Controllers\Admin\ScanAbsenController::class, 'form'])->name('admin.scan');
-
+Route::get('/sertifikat/{id}', [SertifikatController::class, 'generate'])->name('sertifikat.generate')->middleware('auth');
 Route::get('/user/barcode', [BarcodeController::class, 'index'])->name('user.qrcode');
+
+Route::get('/admin/scan-kehadiran/{id}', [RegisterPelatihanController::class, 'hadir'])->name('admin.absen.hadir');
+Route::get('/admin/scan-absen', [ScanAbsenController::class, 'form'])->name('admin.scan');
 Route::post('/admin/scan-absen', [ScanAbsenController::class, 'proses'])->name('admin.scan.proses');
 Route::get('/admin/kehadiran', [ScanAbsenController::class, 'daftarHadir'])->name('admin.kehadiran');
 
@@ -127,93 +117,26 @@ Route::get('/get-kabupaten/{provinsi_id}', [WilayahController::class, 'getKabupa
 Route::get('/get-kecamatan/{kabupaten_id}', [WilayahController::class, 'getKecamatan']);
 Route::get('/get-kelurahan/{kecamatan_id}', [WilayahController::class, 'getKelurahan']);
 
-// Tampilkan form
-Route::get('/biodata', [BiodataController::class, 'form'])->name('user.biodata.form');
-
-// Simpan data
-Route::post('/biodata', [BiodataController::class, 'store'])->name('user.biodata.store');
-
-Route::middleware(['auth', 'verified'])->prefix('user')->name('user.')->group(function () {
-    Route::get('/biodata', [BiodataController::class, 'create'])->name('biodata.create');
-    Route::post('/biodata', [BiodataController::class, 'store'])->name('biodata.store');
-});
-
 Route::get('/api/desa/{id}', function ($id) {
     $desa = \App\Models\Kelurahan::with('kecamatan.kabupatenKota.provinsi')->find($id);
-
-    if (!$desa) {
-        return response()->json(['error' => 'Desa tidak ditemukan'], 404);
-    }
+    if (!$desa) return response()->json(['error' => 'Desa tidak ditemukan'], 404);
 
     return response()->json([
         'provinsi'   => $desa->kecamatan->kabupatenKota->provinsi->nama ?? '',
         'kabupaten'  => $desa->kecamatan->kabupatenKota->nama ?? '',
         'kecamatan'  => $desa->kecamatan->nama ?? '',
         'desa'       => $desa->nama ?? '',
-        'kode_desa'  => $desa->kode ?? '', // <== PENTING: kode, bukan kode_desa
+        'kode_desa'  => $desa->kode ?? '',
     ]);
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/sertifikat/{id}', [\App\Http\Controllers\User\SertifikatController::class, 'generate'])->name('sertifikat.generate');
-});
-
 Route::post('/admin/biodata/acc/{id}', [BiodataApprovalController::class, 'approve'])->name('admin.biodata.approve');
-
-
 Route::delete('/admin/user/biodata/{id}', [BiodataUserController::class, 'destroy'])->name('admin.user.biodata.destroy');
-
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/sertifikat/edit', [SertifikatTextController::class, 'edit'])->name('admin.sertifikat.edit');
     Route::put('/admin/sertifikat/update', [SertifikatTextController::class, 'update'])->name('admin.sertifikat.update');
 });
 
-
-// ROUTE UNTUK USER LOGIN BIASA
-Route::middleware(['auth'])->group(function () {
-    // Dashboard user
-    Route::get('/dashboard', function () {
-        return view('user.dashboard');
-    })->name('dashboard');
-
-    // Generate sertifikat (cek status ACC admin di controller)
-    Route::get('/sertifikat/{id}', [SertifikatController::class, 'generate'])
-        ->name('sertifikat.generate');
-});
-
-// ROUTE UNTUK ADMIN
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    // Dashboard admin
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
-
-    // Halaman edit teks sertifikat
-    Route::get('/sertifikat/edit', [SertifikatTextController::class, 'edit'])->name('sertifikat.edit');
-    Route::put('/sertifikat/update', [SertifikatTextController::class, 'update'])->name('sertifikat.update');
-});
-Route::get('/user/sertifikat/download', [SertifikatController::class, 'generate'])
-    ->middleware(['auth'])
-    ->name('sertifikat.generate');
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/sertifikat/edit', [SertifikatTextController::class, 'edit'])->name('admin.sertifikat.edit');
-});
-
-Route::get('/sertifikat', [SertifikatController::class, 'generate'])
-->middleware('auth')
-->name('sertifikat.generate');
-
-Route::get('/user/sertifikat', [SertifikatController::class, 'generate'])
-    ->middleware('auth')
-    ->name('sertifikat.generate');
-
-    Route::middleware('auth')->group(function () {
-        Route::get('/admin/sertifikat/edit', [SertifikatTextController::class, 'edit'])->name('admin.sertifikat.edit');
-        Route::put('/admin/sertifikat/update', [SertifikatTextController::class, 'update'])->name('admin.sertifikat.update');
-    });
-
 // Auth scaffolding
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

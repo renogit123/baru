@@ -95,15 +95,20 @@ class SertifikatController extends Controller
         $pdf->SetXY(150, 182);
         $pdf->Cell(0, 6, 'NIP. ' . ($text->nip_penandatangan ?? '-'), 0, 1, 'L');
 
-        // 🔵 Penetapan
-        $pdf->SetXY(30, 186);
-        $pdf->Cell(0, 6, 'Ditetapkan di ' . ($text->kota_penetapan ?? '-'), 0, 1, 'L');
+        // Penandatangan
+        $pdf->SetFont('Arial', 'B', 11);
+        $pdf->SetXY(130, 80);
+        $pdf->Cell(0, 6, $text->penandatangan ?? '-', 0, 1, 'L');
 
-        $pdf->SetXY(30, 192);
-        $pdf->Cell(0, 6, 'Pada tanggal ' . (\Carbon\Carbon::parse($text->tanggal_penetapan ?? now())->translatedFormat('d F Y')), 0, 1, 'L');
+        $pdf->SetFont('Arial', '', 11);
+        $pdf->SetXY(150, 90);
+        $pdf->Cell(0, 6, $text->jabatan_penandatangan ?? '-', 0, 1, 'L');
 
-        $pdf->SetXY(30, 198);
-        $pdf->Cell(0, 6, $text->jabatan_penetapan ?? '-', 0, 1, 'L');
+        $pdf->SetFont('Arial', '', 11);
+        $pdf->SetXY(150, 100);
+        $pdf->Cell(0, 6, 'NIP. ' . ($text->nip_penandatangan ?? '-'), 0, 1, 'L');
+
+        
 
         return response()->streamDownload(function () use ($pdf) {
             $pdf->Output('I', 'sertifikat.pdf');
