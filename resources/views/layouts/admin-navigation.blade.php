@@ -3,7 +3,7 @@
     <!-- Atas: Logo dan Menu -->
     <div class="px-6 py-4">
         <!-- Logo -->
-        <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 mb-6">
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 mb-6">
             <img src="{{ asset('img/Subtract.png') }}" alt="Kemendagri Logo" class="h-8 w-8">
             <span class="text-lg font-bold bg-gradient-to-r from-yellow-300 to-white bg-clip-text text-transparent">
                 Admin Kemendagri
@@ -13,7 +13,7 @@
         <!-- Menu Items -->
         <ul class="space-y-2 text-sm">
             <li>
-                <a href="{{ route('dashboard') }}"
+                <a href="{{ route('admin.dashboard') }}"
                    class="block px-3 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('dashboard') ? 'bg-gray-700' : '' }}">
                     🏠 Dashboard
                 </a>
@@ -62,8 +62,16 @@
                     <li><a href="{{ route('admin.kehadiran') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Lihat Kehadiran</a></li>
                 </ul>
             </li>
+
+            <li>
+                <a href="{{ route('admin.sertifikat.edit') }}" class="block px-3 py-2 hover:bg-gray-700 rounded">
+                    📄 Kelola Sertifikat
+                </a>
+            </li>
             
         </div>
+
+        
 
     <!-- Bawah: Profile -->
     <div class="px-6 py-4 border-t border-gray-700">

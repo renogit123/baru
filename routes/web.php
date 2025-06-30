@@ -21,6 +21,8 @@ use App\Http\Controllers\Admin\JadwalPelatihanBaruController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\User\SertifikatController;
 use App\Http\Controllers\Admin\BiodataApprovalController;
+use App\Http\Controllers\Admin\SertifikatTextController;
+
 
 
 
@@ -160,6 +162,58 @@ Route::post('/admin/biodata/acc/{id}', [BiodataApprovalController::class, 'appro
 
 
 Route::delete('/admin/user/biodata/{id}', [BiodataUserController::class, 'destroy'])->name('admin.user.biodata.destroy');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/sertifikat/edit', [SertifikatTextController::class, 'edit'])->name('admin.sertifikat.edit');
+    Route::put('/admin/sertifikat/update', [SertifikatTextController::class, 'update'])->name('admin.sertifikat.update');
+});
+
+
+// ROUTE UNTUK USER LOGIN BIASA
+Route::middleware(['auth'])->group(function () {
+    // Dashboard user
+    Route::get('/dashboard', function () {
+        return view('user.dashboard');
+    })->name('dashboard');
+
+    // Generate sertifikat (cek status ACC admin di controller)
+    Route::get('/sertifikat/{id}', [SertifikatController::class, 'generate'])
+        ->name('sertifikat.generate');
+});
+
+// ROUTE UNTUK ADMIN
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard admin
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    // Halaman edit teks sertifikat
+    Route::get('/sertifikat/edit', [SertifikatTextController::class, 'edit'])->name('sertifikat.edit');
+    Route::put('/sertifikat/update', [SertifikatTextController::class, 'update'])->name('sertifikat.update');
+});
+Route::get('/user/sertifikat/download', [SertifikatController::class, 'generate'])
+    ->middleware(['auth'])
+    ->name('sertifikat.generate');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/sertifikat/edit', [SertifikatTextController::class, 'edit'])->name('admin.sertifikat.edit');
+});
+
+Route::get('/sertifikat', [SertifikatController::class, 'generate'])
+->middleware('auth')
+->name('sertifikat.generate');
+
+Route::get('/user/sertifikat', [SertifikatController::class, 'generate'])
+    ->middleware('auth')
+    ->name('sertifikat.generate');
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/admin/sertifikat/edit', [SertifikatTextController::class, 'edit'])->name('admin.sertifikat.edit');
+        Route::put('/admin/sertifikat/update', [SertifikatTextController::class, 'update'])->name('admin.sertifikat.update');
+    });
 
 // Auth scaffolding
 require __DIR__.'/auth.php';
