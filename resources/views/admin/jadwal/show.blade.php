@@ -19,11 +19,18 @@
         </div>
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold">👥 Daftar Peserta</h3>
-            <a href="{{ route('admin.jadwal.export-nilai', $jadwal->id) }}"
-               class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded shadow">
-               📥 Download PDF Nilai
-            </a>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.jadwal.export-nilai', $jadwal->id) }}"
+                   class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded shadow">
+                   📥 Download PDF Nilai
+                </a>
+                <a href="{{ route('admin.jadwal.export-excel', $jadwal->id) }}"
+                   class="px-3 py-1 bg-green-600 hover:bg-green-500 text-white text-xs rounded shadow">
+                   📊 Download Excel Nilai
+                </a>
+            </div>
         </div>
+        
         <div>
             <h3 class="text-lg font-bold">👥 Daftar Peserta</h3>
 

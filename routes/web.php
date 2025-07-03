@@ -157,7 +157,15 @@ Route::get('/admin/biodata/export-nilai-kosong', [BiodataExportController::class
     Route::get('/admin/jadwal/{id}/export-nilai', [BiodataExportController::class, 'exportByJadwal'])
     ->name('admin.jadwal.export-nilai');
 
-    
+    Route::get('/admin/export-excel-nilai/{id}', [App\Http\Controllers\Admin\BiodataExportController::class, 'exportExcelByJadwal'])->name('admin.jadwal.export-excel');
+
+    Route::get('/admin/jadwal/export-excel/{id}', [BiodataExportController::class, 'exportExcelByJadwal'])
+    ->name('admin.jadwal.export-excel');
+
+    Route::get('/admin/jadwal/export-pdf/{id}', [BiodataExportController::class, 'exportPdfByJadwal'])->name('admin.jadwal.export-pdf');
+    Route::get('/admin/jadwal/{id}/export', [BiodataExportController::class, 'exportByJadwal'])->name('admin.jadwal.export');
+Route::get('/admin/jadwal/{id}/export-excel', [BiodataExportController::class, 'exportExcelByJadwal'])->name('admin.jadwal.export.excel');
+
 
 // Auth scaffolding
 require __DIR__ . '/auth.php';
