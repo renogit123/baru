@@ -9,11 +9,16 @@
         @if(session('error'))
             <div class="text-red-600 mb-4">{{ session('error') }}</div>
         @else
-            <div class="mb-6">
+            {{-- Centered QR Code --}}
+            <div class="flex justify-center mb-6">
                 {!! QrCode::size(250)->generate($register->id) !!}
             </div>
+
             <p class="text-gray-600">ID Kehadiran: <strong>{{ $register->id }}</strong></p>
-            <p class="text-gray-500 text-sm mt-2">QR ini hanya untuk pelatihan: <br><strong>{{ $register->jadwal->judul ?? '-' }}</strong></p>
+            <p class="text-gray-500 text-sm mt-2">
+                QR ini hanya untuk pelatihan: <br>
+                <strong>{{ $register->jadwal->judul ?? '-' }}</strong>
+            </p>
         @endif
     </div>
 </x-user-layout>
