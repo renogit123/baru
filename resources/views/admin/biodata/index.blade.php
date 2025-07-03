@@ -1,6 +1,14 @@
 <x-admin-layout>
     <h2 class="text-xl font-semibold text-white mb-4">Daftar Biodata User</h2>
 
+        <!-- Tombol Export PDF -->
+        <div class="mb-4">
+            <a href="{{ route('admin.nilai.kosong') }}"
+               class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">
+                📄 Download PDF Nilai PRE TEST dan POST TEST
+            </a>
+        </div>
+
     <div class="p-6 bg-gradient-to-br from-[#0a1f44] to-[#1e40af] rounded shadow min-h-screen text-white">
         <div class="overflow-x-auto bg-white/5 backdrop-blur border border-white/10 rounded-lg p-4">
             <table class="min-w-full border divide-y divide-white/10 text-sm">

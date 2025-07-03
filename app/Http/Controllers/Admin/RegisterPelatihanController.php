@@ -34,6 +34,15 @@ class RegisterPelatihanController extends Controller
         return redirect()->back()->with('success', 'Peserta berhasil ditolak.');
     }
 
+    public function batal($id)
+    {
+        $pendaftar = RegisterPelatihan::findOrFail($id);
+        $pendaftar->status_peserta = 'pending'; // Atau 'belum_dikonfirmasi' jika kamu pakai nama itu
+        $pendaftar->save();
+    
+        return redirect()->back()->with('success', 'Status peserta berhasil dibatalkan.');
+    }
+    
     public function hadir($id)
     {
         $reg = RegisterPelatihan::findOrFail($id);

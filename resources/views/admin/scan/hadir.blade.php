@@ -28,7 +28,7 @@
                             <th class="px-4 py-2 border border-white/20 text-left">Judul Pelatihan</th>
                             <th class="px-4 py-2 border border-white/20 text-left">Waktu Dikonfirmasi</th>
                             <th class="px-4 py-2 border border-white/20 text-left">Status</th>
-                            <th class="px-4 py-2 border border-white/20 text-left">Aksi</th>
+                            <th class="px-4 py-2 border border-white/20 text-left">Setujui Sertifikat</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,16 +52,21 @@
                                 </td>
                                 <td class="px-4 py-2 border border-white/10">
                                     @if(!$biodata?->is_approved)
-                                        <form action="{{ route('admin.biodata.approve', $row->user->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit"
-                                                class="text-xs px-3 py-1 bg-green-600 hover:bg-green-500 rounded text-white">
-                                                ✅ Setujui
-                                            </button>
-                                        </form>
-                                    @else
-                                        <span class="text-xs text-green-400">✔ Sudah</span>
-                                    @endif
+                                    <form action="{{ route('admin.biodata.approve', $row->user->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="text-xs px-3 py-1 bg-green-600 hover:bg-green-500 rounded text-white">
+                                            ✅ Setujui
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('admin.biodata.batal', $row->user->id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="text-xs px-3 py-1 bg-red-600 hover:bg-red-500 rounded text-white">
+                                            ❌ Batalkan
+                                        </button>
+                                    </form>
+                                @endif                                
                                 </td>
                             </tr>
                         @endforeach

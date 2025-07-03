@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\JadwalPelatihanBaruController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\User\SertifikatController;
 use App\Http\Controllers\Admin\BiodataApprovalController;
+use App\Http\Controllers\Admin\BiodataExportController;
 use App\Http\Controllers\Admin\SertifikatTextController;
 
 // Halaman awal
@@ -67,6 +68,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->grou
     Route::get('/biodata-user', [BiodataUserController::class, 'index'])->name('user.biodata.index');
     Route::get('/biodata-user/{id}/edit', [BiodataUserController::class, 'edit'])->name('user.biodata.edit');
     Route::put('/biodata-user/{id}', [BiodataUserController::class, 'update'])->name('user.biodata.update');
+    Route::put('/pelatihan/batal/{id}', [RegisterPelatihanController::class, 'batal'])->name('pelatihan.batal');
 
     Route::prefix('pelatihan')->name('pelatihan.')->group(function () {
         Route::get('/', [PelatihanController::class, 'index'])->name('index');
@@ -140,6 +142,22 @@ Route::middleware(['auth'])->group(function () {
 
 Route::put('/admin/pelatihan/{id}/reject', [RegisterPelatihanController::class, 'reject'])->name('admin.pelatihan.reject');
 
+Route::put('/pelatihan/batal/{id}', [RegisterPelatihanController::class, 'batal'])->name('pelatihan.batal');
+
+Route::post('/admin/biodata/approve/{id}', [\App\Http\Controllers\Admin\BiodataApprovalController::class, 'approve'])->name('admin.biodata.approve');
+Route::put('/admin/biodata/batal/{id}', [\App\Http\Controllers\Admin\BiodataApprovalController::class, 'batal'])->name('admin.biodata.batal');
+
+Route::get('/admin/export-nilai-kosong', [BiodataExportController::class, 'exportKosong'])->name('admin.nilai.kosong');
+
+Route::get('/admin/export-biodata-kosong', [BiodataExportController::class, 'exportKosong'])->name('admin.export.kosong');
+
+Route::get('/admin/biodata/export-nilai-kosong', [BiodataExportController::class, 'exportNilaiKosong'])
+    ->name('admin.biodata.export.nilai');
+
+    Route::get('/admin/jadwal/{id}/export-nilai', [BiodataExportController::class, 'exportByJadwal'])
+    ->name('admin.jadwal.export-nilai');
+
+    
 
 // Auth scaffolding
 require __DIR__ . '/auth.php';

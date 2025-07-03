@@ -29,11 +29,10 @@
                 </button>
                 <ul x-show="open" x-transition class="pl-4 mt-1 space-y-1">
                     <li><a href="{{ route('admin.provinsi.index') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Tambah Provinsi</a></li>
-                    <li><a href="{{ route('admin.kabupaten-kota.index') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Tambah Kabupaten</a></li>
+                    <li><a href="{{ route('admin.kabupaten-kota.index') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Tambah Kabupaten/kota</a></li>
                     <li><a href="{{ route('admin.kecamatan.index') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Tambah Kecamatan</a></li>
-                    <li><a href="{{ route('admin.kelurahan.index') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Tambah Kelurahan</a></li>
+                    <li><a href="{{ route('admin.kelurahan.index') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Tambah Kelurahan/desa</a></li>
                     <li><hr class="border-gray-700 my-1"></li>
-                    <li><a href="{{ route('admin.wilayah') }}" class="block px-2 py-1 hover:bg-gray-700 rounded">Lihat Wilayah</a></li>
                 </ul>
             </li>
 

@@ -1,4 +1,5 @@
 <x-admin-layout>
+    
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-semibold text-white">📋 Detail Jadwal: {{ $jadwal->judul }}</h2>
         <a href="{{ route('admin.jadwal-pelatihan.index') }}" class="text-sm text-white/70 hover:underline">⬅️ Kembali</a>
@@ -16,7 +17,13 @@
                 @endif
             </p>
         </div>
-
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">👥 Daftar Peserta</h3>
+            <a href="{{ route('admin.jadwal.export-nilai', $jadwal->id) }}"
+               class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded shadow">
+               📥 Download PDF Nilai
+            </a>
+        </div>
         <div>
             <h3 class="text-lg font-bold">👥 Daftar Peserta</h3>
 
@@ -41,30 +48,41 @@
                             <td class="px-4 py-2">{{ $pendaftar->user->biodata->nik ?? '-' }}</td>
                             <td class="px-4 py-2">
                                 @if($pendaftar->status_peserta === 'approved')
+                                <div class="flex gap-2 items-center">
                                     <span class="text-green-400 font-semibold">✅ Disetujui</span>
-                                @elseif($pendaftar->status_peserta === 'rejected')
-                                    <span class="text-red-400 font-semibold">❌ Ditolak</span>
-                                @else
-                                    <div class="flex gap-2">
-                                        <form method="POST" action="{{ route('admin.pelatihan.acc', $pendaftar->id) }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <button 
-                                                class="text-green-300 hover:underline"
-                                                onclick="this.disabled=true; this.innerText='Menyetujui...'; this.form.submit();">
-                                                ✅ ACC
-                                            </button>
-                                        </form>
-                                        <form method="POST" action="{{ route('admin.pelatihan.reject', $pendaftar->id) }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <button 
-                                                class="text-red-300 hover:underline"
-                                                onclick="this.disabled=true; this.innerText='Menolak...'; this.form.submit();">
-                                                ❌ Tolak
-                                            </button>
-                                        </form>
-                                    </div>
+                                    <form method="POST" action="{{ route('admin.pelatihan.batal', $pendaftar->id) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <button 
+                                            class="text-yellow-300 hover:underline"
+                                            onclick="return confirm('Yakin ingin membatalkan persetujuan?')">
+                                            🔁 Batalkan
+                                        </button>
+                                    </form>
+                                </div>
+                            @elseif($pendaftar->status_peserta === 'rejected')
+                                <span class="text-red-400 font-semibold">❌ Ditolak</span>
+                            @else
+                                <div class="flex gap-2">
+                                    <form method="POST" action="{{ route('admin.pelatihan.acc', $pendaftar->id) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <button 
+                                            class="text-green-300 hover:underline"
+                                            onclick="this.disabled=true; this.innerText='Menyetujui...'; this.form.submit();">
+                                            ✅ ACC
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ route('admin.pelatihan.reject', $pendaftar->id) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <button 
+                                            class="text-red-300 hover:underline"
+                                            onclick="this.disabled=true; this.innerText='Menolak...'; this.form.submit();">
+                                            ❌ Tolak
+                                        </button>
+                                    </form>
+                                </div>
                                 @endif
                             </td>
                         </tr>

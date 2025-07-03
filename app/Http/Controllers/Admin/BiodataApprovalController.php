@@ -15,4 +15,13 @@ class BiodataApprovalController extends Controller
 
         return back()->with('success', 'Biodata berhasil disetujui.');
     }
+
+    public function batal($id)
+    {
+        $biodata = Biodata::where('user_id', $id)->firstOrFail();
+        $biodata->is_approved = false;
+        $biodata->save();
+
+        return back()->with('success', 'Persetujuan biodata dibatalkan.');
+    }
 }
