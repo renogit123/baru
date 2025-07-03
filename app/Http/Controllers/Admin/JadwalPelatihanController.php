@@ -1,24 +1,28 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-use App\Models\JadwalPelatihanBaru;
-use App\Http\Controllers\Controller;
+
 use App\Models\JadwalPelatihan;
+use App\Models\JadwalPelatihanBaru;
+use App\Models\Provinsi;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class JadwalPelatihanController extends Controller
+{   
+public function index()
 {
-    public function index()
-    {
-        $jadwals = JadwalPelatihan::latest()->get();
-        return view('admin.jadwal.index', compact('jadwals'));
-    }
+    $jadwals = JadwalPelatihan::with(['provinsi', 'kabupatenkota'])->latest()->get();
+    return view('admin.jadwal.index', compact('jadwals'));
+}
 
-    public function create()
-    {
-        $judulList = JadwalPelatihanBaru::all();
-        return view('admin.jadwal.create', compact('judulList'));
-    }
+public function create()
+{
+    $judulList = JadwalPelatihanBaru::all();
+    $provinsis = Provinsi::with('kabupatenKotas')->get();
+    return view('admin.jadwal.create', compact('judulList', 'provinsis'));
+}
+
 
     public function store(Request $request)
     {
@@ -29,6 +33,8 @@ class JadwalPelatihanController extends Controller
             'pembiayaan' => 'required|in:RM,PNBP',
             'kelas' => 'required|string|max:100',
             'status' => 'required|boolean',
+            'provinsi_id' => 'required|exists:provinsis,id',
+            'kabupaten_id' => 'required|exists:kabupaten_kotas,id',
         ]);
 
         JadwalPelatihan::create($request->all());
@@ -36,11 +42,14 @@ class JadwalPelatihanController extends Controller
         return redirect()->route('admin.jadwal-pelatihan.index')->with('success', 'Jadwal berhasil ditambahkan.');
     }
 
-    public function edit($id)
-    {
-        $pelatihan = JadwalPelatihan::findOrFail($id);
-        return view('admin.jadwal.edit', compact('pelatihan'));
-    }
+public function edit($id)
+{
+    $pelatihan = JadwalPelatihan::findOrFail($id);
+    $judulList = JadwalPelatihanBaru::all();
+    $provinsis = Provinsi::with('kabupatenKotas')->get();
+
+    return view('admin.jadwal.edit', compact('pelatihan', 'judulList', 'provinsis'));
+}
 
     public function update(Request $request, $id)
     {
@@ -51,11 +60,13 @@ class JadwalPelatihanController extends Controller
             'pembiayaan' => 'required|in:RM,PNBP',
             'kelas' => 'required|string|max:100',
             'status' => 'required|in:1,0',
+            'provinsi_id' => 'required|exists:provinsis,id',
+            'kabupaten_id' => 'required|exists:kabupaten_kotas,id',
         ]);
-    
-        $pelatihan = \App\Models\JadwalPelatihan::findOrFail($id);
+
+        $pelatihan = JadwalPelatihan::findOrFail($id);
         $pelatihan->update($validated);
-    
+
         return redirect()->route('admin.jadwal-pelatihan.index')->with('success', 'Jadwal berhasil diperbarui!');
     }
 
@@ -63,28 +74,19 @@ class JadwalPelatihanController extends Controller
     {
         $pelatihan = JadwalPelatihan::findOrFail($id);
         $pelatihan->delete();
-    
+
         return redirect()->route('admin.jadwal-pelatihan.index')->with('success', 'Jadwal berhasil dihapus');
     }
-    
+
     public function pendaftar($id)
     {
         $jadwal = JadwalPelatihan::with('pendaftars.user.biodata')->findOrFail($id);
-    
         return view('admin.jadwal-pelatihan.pendaftar', compact('jadwal'));
     }
-    
+
     public function show($id)
     {
-        $jadwal = \App\Models\JadwalPelatihan::with([
-            'pendaftars.user.biodata' // agar langsung ambil relasi user & biodata
-        ])->findOrFail($id);
-    
+        $jadwal = JadwalPelatihan::with(['pendaftars.user.biodata'])->findOrFail($id);
         return view('admin.jadwal.show', compact('jadwal'));
     }
-    
-    
-
-
 }
-

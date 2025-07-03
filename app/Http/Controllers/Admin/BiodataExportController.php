@@ -12,6 +12,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Illuminate\Support\Str;
+
 
 require_once base_path('vendor/setasign/fpdf/fpdf.php');
 
@@ -205,11 +207,10 @@ public function exportByJadwal($id)
 
 public function exportExcelByJadwal($id)
 {
-    $jadwal = JadwalPelatihan::with('pendaftars.user.biodata')->findOrFail($id);
+    $jadwal = JadwalPelatihan::with(['pendaftars.user.biodata', 'provinsi', 'kabupatenkota'])->findOrFail($id);
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
 
-    // Tambah logo dan header tulisan
     $logoPath = public_path('img/logo-kemendagri.png');
     if (file_exists($logoPath)) {
         $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
@@ -220,7 +221,6 @@ public function exportExcelByJadwal($id)
         $drawing->setWorksheet($sheet);
     }
 
-    // Header tulisan
     $sheet->mergeCells('B1:F1');
     $sheet->mergeCells('B2:F2');
     $sheet->setCellValue('B1', 'KEMENTERIAN DALAM NEGERI REPUBLIK INDONESIA');
@@ -228,39 +228,45 @@ public function exportExcelByJadwal($id)
     $sheet->getStyle('B1:B2')->getFont()->setBold(true);
     $sheet->getStyle('B1:B2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
-    // Judul tengah
     $sheet->mergeCells('A4:F4');
     $sheet->mergeCells('A5:F5');
     $sheet->mergeCells('A6:F6');
+
     $sheet->setCellValue('A4', 'DAFTAR NILAI PRE TEST DAN POST TEST');
-    $sheet->setCellValue('A5', 'PELATIHAN TEKNIS PENYUSUNAN LAPORAN PENYELENGGARAAN PEMERINTAHAN DESA TAHUN 2024');
-    $sheet->setCellValue('A6', 'KABUPATEN HALMAHERA TENGAH PROVINSI MALUKU UTARA');
+    $sheet->setCellValue('A5', strtoupper($jadwal->judul));
+
+    $kabupatenkotaNama = strtoupper($jadwal->kabupatenkota->nama ?? '');
+    $provinsiNama = strtoupper($jadwal->provinsi->nama ?? '');
+
+    if (Str::startsWith($kabupatenkotaNama, 'KOTA')) {
+        $wilayahLine = "{$kabupatenkotaNama} PROVINSI {$provinsiNama}";
+    } else {
+        $wilayahLine = "KABUPATEN {$kabupatenkotaNama} PROVINSI {$provinsiNama}";
+    }
+
+    $sheet->setCellValue('A6', $wilayahLine);
+
     $sheet->getStyle('A4:A6')->getFont()->setBold(true)->setSize(13);
     $sheet->getStyle('A4:A6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-    // Tanggal
     $sheet->setCellValue('A8', 'Tanggal, ' . Carbon::now()->translatedFormat('d F Y'));
     $sheet->getStyle('A8')->getFont()->setSize(10);
 
-    // Header baris 1
-    $sheet->setCellValue('A10', value: 'NO');
+    $sheet->setCellValue('A10', 'NO');
     $sheet->setCellValue('B10', 'NAMA');
     $sheet->setCellValue('C10', 'L/P');
     $sheet->setCellValue('D10', 'JABATAN');
     $sheet->setCellValue('E10', 'N I L A I');
     $sheet->mergeCells('E10:F10');
 
-    // Header baris 2 (sub kolom)
     $sheet->setCellValue('E11', 'PRE TEST');
     $sheet->setCellValue('F11', 'POST TEST');
 
-    // Merge header lainnya vertikal
     $sheet->mergeCells('A10:A11');
     $sheet->mergeCells('B10:B11');
     $sheet->mergeCells('C10:C11');
     $sheet->mergeCells('D10:D11');
 
-    // Styling Header
     $headerStyle = [
         'font' => ['bold' => true],
         'alignment' => [
@@ -275,7 +281,6 @@ public function exportExcelByJadwal($id)
     ];
     $sheet->getStyle('A10:F11')->applyFromArray($headerStyle);
 
-    // Data peserta
     $row = 12;
     $no = 1;
     $preSum = 0;
@@ -288,7 +293,6 @@ public function exportExcelByJadwal($id)
         if (!$bio) continue;
 
         $jk = strtoupper($bio->jenis_kelamin) === 'LAKI-LAKI' ? 'L' : 'P';
-
         $pre = $peserta->pre_test ?? null;
         $post = $peserta->post_test ?? null;
 
@@ -311,7 +315,6 @@ public function exportExcelByJadwal($id)
         $row++;
     }
 
-    // Rata-rata
     $sheet->setCellValue("A{$row}", 'RATA-RATA');
     $sheet->mergeCells("A{$row}:D{$row}");
     $sheet->setCellValue("E{$row}", $nilaiCount ? round($preSum / $nilaiCount, 2) : '');
@@ -327,7 +330,6 @@ public function exportExcelByJadwal($id)
     ]);
     $row++;
 
-    // Kategori
     $sheet->setCellValue("A{$row}", 'KATEGORI PENILAIAN');
     $sheet->mergeCells("A{$row}:F{$row}");
     $row++;
@@ -354,6 +356,5 @@ public function exportExcelByJadwal($id)
 
     return response()->download($tempPath, $filename)->deleteFileAfterSend(true);
 }
-
 
 }

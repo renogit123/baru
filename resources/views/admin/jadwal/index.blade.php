@@ -22,6 +22,8 @@
                     <tr>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Judul</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Tanggal</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold">Provinsi</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold">Kabupaten</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Pembiayaan</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Kelas</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Status</th>
@@ -33,6 +35,8 @@
                         <tr>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->judul }}</td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->tgl_mulai }} s/d {{ $jadwal->tgl_selesai }}</td>
+                            <td class="px-4 py-2 text-sm">{{ $jadwal->provinsi->nama ?? '-' }}</td>
+                            <td class="px-4 py-2 text-sm">{{ $jadwal->kabupatenkota->nama ?? '-' }}</td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->pembiayaan }}</td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->kelas }}</td>
                             <td class="px-4 py-2 text-sm">
@@ -58,7 +62,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-4 text-center text-sm text-white/70">Belum ada data jadwal pelatihan.</td>
+                            <td colspan="8" class="px-4 py-4 text-center text-sm text-white/70">Belum ada data jadwal pelatihan.</td>
                         </tr>
                     @endforelse
                 </tbody>

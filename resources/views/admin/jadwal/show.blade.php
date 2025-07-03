@@ -9,6 +9,8 @@
         <div>
             <h3 class="text-lg font-bold">🗓️ Informasi Pelatihan</h3>
             <p><strong>Tanggal:</strong> {{ $jadwal->tgl_mulai }} s/d {{ $jadwal->tgl_selesai }}</p>
+            <p><strong>Provinsi:</strong> {{ $jadwal->provinsi->nama ?? '-' }}</p>
+            <p><strong>Kabupaten:</strong> {{ $jadwal->kabupatenkota->nama ?? '-' }}</p>
             <p><strong>Status:</strong>
                 @if($jadwal->status)
                     <span class="text-green-400 font-semibold">Aktif</span>
@@ -17,6 +19,7 @@
                 @endif
             </p>
         </div>
+
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold">👥 Daftar Peserta</h3>
             <div class="flex gap-2">
@@ -55,41 +58,41 @@
                             <td class="px-4 py-2">{{ $pendaftar->user->biodata->nik ?? '-' }}</td>
                             <td class="px-4 py-2">
                                 @if($pendaftar->status_peserta === 'approved')
-                                <div class="flex gap-2 items-center">
-                                    <span class="text-green-400 font-semibold">✅ Disetujui</span>
-                                    <form method="POST" action="{{ route('admin.pelatihan.batal', $pendaftar->id) }}">
-                                        @csrf
-                                        @method('PUT')
-                                        <button 
-                                            class="text-yellow-300 hover:underline"
-                                            onclick="return confirm('Yakin ingin membatalkan persetujuan?')">
-                                            🔁 Batalkan
-                                        </button>
-                                    </form>
-                                </div>
-                            @elseif($pendaftar->status_peserta === 'rejected')
-                                <span class="text-red-400 font-semibold">❌ Ditolak</span>
-                            @else
-                                <div class="flex gap-2">
-                                    <form method="POST" action="{{ route('admin.pelatihan.acc', $pendaftar->id) }}">
-                                        @csrf
-                                        @method('PUT')
-                                        <button 
-                                            class="text-green-300 hover:underline"
-                                            onclick="this.disabled=true; this.innerText='Menyetujui...'; this.form.submit();">
-                                            ✅ ACC
-                                        </button>
-                                    </form>
-                                    <form method="POST" action="{{ route('admin.pelatihan.reject', $pendaftar->id) }}">
-                                        @csrf
-                                        @method('PUT')
-                                        <button 
-                                            class="text-red-300 hover:underline"
-                                            onclick="this.disabled=true; this.innerText='Menolak...'; this.form.submit();">
-                                            ❌ Tolak
-                                        </button>
-                                    </form>
-                                </div>
+                                    <div class="flex gap-2 items-center">
+                                        <span class="text-green-400 font-semibold">✅ Disetujui</span>
+                                        <form method="POST" action="{{ route('admin.pelatihan.batal', $pendaftar->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <button 
+                                                class="text-yellow-300 hover:underline"
+                                                onclick="return confirm('Yakin ingin membatalkan persetujuan?')">
+                                                🔁 Batalkan
+                                            </button>
+                                        </form>
+                                    </div>
+                                @elseif($pendaftar->status_peserta === 'rejected')
+                                    <span class="text-red-400 font-semibold">❌ Ditolak</span>
+                                @else
+                                    <div class="flex gap-2">
+                                        <form method="POST" action="{{ route('admin.pelatihan.acc', $pendaftar->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <button 
+                                                class="text-green-300 hover:underline"
+                                                onclick="this.disabled=true; this.innerText='Menyetujui...'; this.form.submit();">
+                                                ✅ ACC
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('admin.pelatihan.reject', $pendaftar->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <button 
+                                                class="text-red-300 hover:underline"
+                                                onclick="this.disabled=true; this.innerText='Menolak...'; this.form.submit();">
+                                                ❌ Tolak
+                                            </button>
+                                        </form>
+                                    </div>
                                 @endif
                             </td>
                         </tr>

@@ -10,16 +10,26 @@
         <form method="POST" action="{{ route('admin.jadwal-pelatihan.store') }}">
             @csrf
 
-            {{-- <x-input-label for="judul" value="Judul Pelatihan" class="text-white/80" />
-            <x-text-input name="judul" class="w-full mb-4 text-black" value="{{ old('judul') }}" /> --}}
-
             <x-input-label for="judul" value="Judul Pelatihan" class="text-white/80" />
-<select name="judul" class="w-full mb-4 text-black rounded border-gray-300" required>
-    <option value="">-- Pilih Judul Pelatihan --</option>
-    @foreach ($judulList as $judul)
-        <option value="{{ $judul->judul }}">{{ $judul->judul }}</option>
-    @endforeach
-</select>
+            <select name="judul" class="w-full mb-4 text-black rounded border-gray-300" required>
+                <option value="">-- Pilih Judul Pelatihan --</option>
+                @foreach ($judulList as $judul)
+                    <option value="{{ $judul->judul }}">{{ $judul->judul }}</option>
+                @endforeach
+            </select>
+
+            <x-input-label for="provinsi_id" value="Provinsi" class="text-white/80" />
+            <select id="provinsi" name="provinsi_id" class="w-full mb-4 text-black rounded border-gray-300" required>
+                <option value="">-- Pilih Provinsi --</option>
+                @foreach($provinsis as $provinsi)
+                    <option value="{{ $provinsi->id }}">{{ $provinsi->nama }}</option>
+                @endforeach
+            </select>
+
+            <x-input-label for="kabupaten_id" value="Kabupaten" class="text-white/80" />
+            <select id="kabupaten" name="kabupaten_id" class="w-full mb-4 text-black rounded border-gray-300" required>
+                <option value="">-- Pilih Kabupaten --</option>
+            </select>
 
             <x-input-label for="tgl_mulai" value="Tanggal Mulai" class="text-white/80" />
             <x-text-input name="tgl_mulai" type="date" class="w-full mb-4 text-black" value="{{ old('tgl_mulai') }}" />
@@ -45,4 +55,24 @@
             <x-primary-button>✔️ Simpan</x-primary-button>
         </form>
     </div>
+
+    <script>
+        const wilayah = @json($provinsis);
+
+        document.getElementById('provinsi').addEventListener('change', function () {
+            const provId = this.value;
+            const kabSelect = document.getElementById('kabupaten');
+            kabSelect.innerHTML = '<option value="">-- Pilih Kabupaten --</option>';
+
+            const selected = wilayah.find(p => p.id == provId);
+            if (selected && selected.kabupaten_kotas && selected.kabupaten_kotas.length) {
+                selected.kabupaten_kotas.forEach(kab => {
+                    const opt = document.createElement('option');
+                    opt.value = kab.id;
+                    opt.text = kab.nama;
+                    kabSelect.appendChild(opt);
+                });
+            }
+        });
+    </script>
 </x-admin-layout>
