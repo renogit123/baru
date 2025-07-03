@@ -21,7 +21,6 @@
         </div>
 
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold">👥 Daftar Peserta</h3>
             <div class="flex gap-2">
                 <a href="{{ route('admin.jadwal.export-nilai', $jadwal->id) }}"
                    class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded shadow">

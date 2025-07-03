@@ -1,7 +1,7 @@
 <x-user-layout>
     <div class="max-w-4xl mx-auto p-6 rounded-xl shadow-lg bg-sky-950 text-white ring-1 ring-white/10">
         <a href="{{ route('user.dashboard') }}"
-           class="inline-flex items-center mb-6 text-sm text-yellow-300 hover:text-white transition">
+           class="inline-flex items-center mb-6 text-sm text-white hover:text-yellow-300 transition">
             ← Kembali ke Dashboard
         </a>
 

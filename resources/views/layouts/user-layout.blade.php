@@ -68,7 +68,7 @@
     </main>
 
     <footer class="text-center text-sm text-white py-4">
-        &copy; {{ now()->year }} Kementerian Dalam Negeri - User Panel
+        &copy; {{ now()->year }} Kementerian Dalam Negeri copyright by RR
     </footer>
 </body>
 </html>
