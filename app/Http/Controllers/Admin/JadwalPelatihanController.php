@@ -92,4 +92,14 @@ class JadwalPelatihanController extends Controller
         $jadwal = JadwalPelatihan::with(['pendaftars.user.biodata'])->findOrFail($id);
         return view('admin.jadwal.show', compact('jadwal'));
     }
+
+    public function showHadir($id)
+{
+    $jadwal = \App\Models\JadwalPelatihan::with(['pendaftars.user.biodata'])->findOrFail($id);
+    $data = $jadwal->pendaftars;
+
+    return view('admin.scan.hadir', compact('data', 'jadwal'));
+}
+
+    
 }
