@@ -10,19 +10,18 @@ use App\Http\Controllers\Controller;
 
 class JadwalPelatihanController extends Controller
 {   
-public function index()
-{
-    $jadwals = JadwalPelatihan::with(['provinsi', 'kabupatenkota'])->latest()->get();
-    return view('admin.jadwal.index', compact('jadwals'));
-}
+    public function index()
+    {
+        $jadwals = JadwalPelatihan::with(['provinsi', 'kabupatenkota'])->latest()->get();
+        return view('admin.jadwal.index', compact('jadwals'));
+    }
 
-public function create()
-{
-    $judulList = JadwalPelatihanBaru::all();
-    $provinsis = Provinsi::with('kabupatenKotas')->get();
-    return view('admin.jadwal.create', compact('judulList', 'provinsis'));
-}
-
+    public function create()
+    {
+        $judulList = JadwalPelatihanBaru::all();
+        $provinsis = Provinsi::with('kabupatenKotas')->get();
+        return view('admin.jadwal.create', compact('judulList', 'provinsis'));
+    }
 
     public function store(Request $request)
     {
@@ -30,6 +29,8 @@ public function create()
             'judul' => 'required|string|max:255',
             'tgl_mulai' => 'required|date',
             'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
+            'jam_mulai' => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
             'pembiayaan' => 'required|in:RM,PNBP',
             'kelas' => 'required|string|max:100',
             'status' => 'required|boolean',
@@ -42,21 +43,23 @@ public function create()
         return redirect()->route('admin.jadwal-pelatihan.index')->with('success', 'Jadwal berhasil ditambahkan.');
     }
 
-public function edit($id)
-{
-    $pelatihan = JadwalPelatihan::findOrFail($id);
-    $judulList = JadwalPelatihanBaru::all();
-    $provinsis = Provinsi::with('kabupatenKotas')->get();
+    public function edit($id)
+    {
+        $pelatihan = JadwalPelatihan::findOrFail($id);
+        $judulList = JadwalPelatihanBaru::all();
+        $provinsis = Provinsi::with('kabupatenKotas')->get();
 
-    return view('admin.jadwal.edit', compact('pelatihan', 'judulList', 'provinsis'));
-}
+        return view('admin.jadwal.edit', compact('pelatihan', 'judulList', 'provinsis'));
+    }
 
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'tgl_mulai' => 'required|date',
-            'tgl_selesai' => 'required|date',
+            'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
+            'jam_mulai' => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
             'pembiayaan' => 'required|in:RM,PNBP',
             'kelas' => 'required|string|max:100',
             'status' => 'required|in:1,0',

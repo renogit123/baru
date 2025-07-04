@@ -12,16 +12,18 @@ class JadwalPelatihan extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'judul',
-        'tgl_mulai',
-        'tgl_selesai',
-        'pembiayaan',
-        'kelas',
-        'status',
-        'provinsi_id',
-        'kabupaten_id',
-    ];
+protected $fillable = [
+    'judul',
+    'tgl_mulai',
+    'tgl_selesai',
+    'jam_mulai',
+    'jam_selesai',
+    'pembiayaan',
+    'kelas',
+    'status',
+    'provinsi_id',
+    'kabupaten_id',
+];
 
     public function pendaftars()
     {

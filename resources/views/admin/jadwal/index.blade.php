@@ -7,14 +7,12 @@
         </a>
     </div>
 
-    {{-- Notifikasi sukses --}}
     @if(session('success'))
         <div class="text-green-300 bg-green-800 px-4 py-2 rounded mb-4">
             {{ session('success') }}
         </div>
     @endif
 
-    {{-- Tabel --}}
     <div class="bg-white/5 p-6 rounded-lg shadow border border-white/10 backdrop-blur text-white">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-white/10">
@@ -22,6 +20,7 @@
                     <tr>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Judul</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Tanggal</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold">Jam</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Provinsi</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Kabupaten</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Pembiayaan</th>
@@ -35,6 +34,11 @@
                         <tr>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->judul }}</td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->tgl_mulai }} s/d {{ $jadwal->tgl_selesai }}</td>
+                            <td class="px-4 py-2 text-sm">
+                                {{ $jadwal->jam_mulai ? \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i') : '-' }}
+                                s/d
+                                {{ $jadwal->jam_selesai ? \Carbon\Carbon::parse($jadwal->jam_selesai)->format('H:i') : '-' }}
+                            </td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->provinsi->nama ?? '-' }}</td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->kabupatenkota->nama ?? '-' }}</td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->pembiayaan }}</td>
@@ -62,7 +66,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-4 py-4 text-center text-sm text-white/70">Belum ada data jadwal pelatihan.</td>
+                            <td colspan="9" class="px-4 py-4 text-center text-sm text-white/70">Belum ada data jadwal pelatihan.</td>
                         </tr>
                     @endforelse
                 </tbody>

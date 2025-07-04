@@ -157,7 +157,7 @@ public function exportByJadwal($id)
     $tanggal = \Carbon\Carbon::parse($jadwal->tgl_mulai)->translatedFormat('l, d F Y');
     $pdf->SetFont('Arial', 'B', 11);
     $pdf->Cell(0, 7, 'HARI / TANGGAL           : ' . $tanggal, 0, 1, 'L');
-    $pdf->Cell(0, 7, 'WAKTU                           :', 0, 1, 'L');
+    $pdf->Cell(0, 7, 'WAKTU                           : ' . ($jadwal->jam_mulai ? \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i') : '-') . ' s/d ' . ($jadwal->jam_selesai ? \Carbon\Carbon::parse($jadwal->jam_selesai)->format('H:i') : '-'), 0, 1, 'L');
     $pdf->Cell(0, 7, 'MATERI                          : ' . strtoupper($jadwal->judul), 0, 1, 'L');
     $pdf->Cell(0, 7, 'TENAGA PENGAJAR    :', 0, 1, 'L');
 
@@ -233,8 +233,6 @@ public function exportByJadwal($id)
         $pdf->Output();
     }, 'daftar-hadir-pelatihan-' . $id . '.pdf');
 }
-
-
 
 public function exportExcelByJadwal($id)
 {
