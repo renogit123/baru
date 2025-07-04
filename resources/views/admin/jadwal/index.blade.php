@@ -51,26 +51,32 @@
                                 @endif
                             </td>
                                 <td class="px-4 py-2 text-sm">
-                                    <div class="flex flex-col space-y-1">
-                                        <a href="{{ route('admin.jadwal-pelatihan.edit', $jadwal->id) }}"
-                                        class="px-3 py-1 bg-yellow-300 text-xs rounded hover:bg-yellow-400 text-blue-900 text-center">
-                                            ✏️ Edit
-                                        </a>
+    <div class="flex flex-col space-y-1">
+        {{-- Tombol Edit --}}
+        <a href="{{ route('admin.jadwal-pelatihan.edit', $jadwal->id) }}"
+           class="px-3 py-1 bg-yellow-300 text-xs rounded hover:bg-yellow-400 text-blue-900 text-center">
+            ✏️ Edit
+        </a>
 
-                                        <form action="{{ route('admin.jadwal-pelatihan.destroy', $jadwal->id) }}"
-                                            method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                            @csrf @method('DELETE')
-                                            <button class="w-full px-3 py-1 bg-red-500 text-xs rounded hover:bg-red-600 text-white text-center">
-                                                🗑️ Hapus
-                                            </button>
-                                        </form>
+        {{-- Tombol Hapus --}}
+        <form action="{{ route('admin.jadwal-pelatihan.destroy', $jadwal->id) }}"
+              method="POST"
+              onsubmit="return confirm('Yakin ingin menghapus?')">
+            @csrf
+            @method('DELETE')
+            <button class="w-full px-3 py-1 bg-red-500 text-xs rounded hover:bg-red-600 text-white text-center">
+                🗑️ Hapus
+            </button>
+        </form>
 
-                                        <a href="{{ route('admin.jadwal-pelatihan.show', $jadwal->id) }}"
-                                        class="px-3 py-1 bg-blue-500 text-xs rounded hover:bg-blue-600 text-white text-center">
-                                            👥 Peserta
-                                        </a>
-                                    </div>
-                                </td>
+        {{-- Tombol Peserta --}}
+        <a href="{{ route('admin.jadwal-pelatihan.show', $jadwal->id) }}"
+           class="px-3 py-1 bg-blue-500 text-xs rounded hover:bg-blue-600 text-white text-center">
+            👥 Peserta
+        </a>
+    </div>
+</td>
+
 
                         </tr>
                     @empty
