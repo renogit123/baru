@@ -25,11 +25,11 @@ public function exportKosong()
 {
     $users = User::with('biodata')->get();
 
-    $pdf = new \FPDF('L', 'mm', 'A4'); // Landscape
+    $pdf = new FPDF('L', 'mm', 'A4'); // Landscape
     $pdf->AddPage();
 
     // Logo kiri atas
-    $logoPath = public_path('img/logo-kemendagri.png');
+    $logoPath = public_path('img/logokemendagri-fix.png');
     if (file_exists($logoPath)) {
         $pdf->Image($logoPath, 19, 5, 20);
     }

@@ -24,11 +24,11 @@
             <div class="flex gap-2">
                 <a href="{{ route('admin.jadwal.export-nilai', $jadwal->id) }}"
                    class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded shadow">
-                   📥 Download PDF Nilai
+                   📥 Download PDF Daftar Hadir
                 </a>
                 <a href="{{ route('admin.jadwal.export-excel', $jadwal->id) }}"
                    class="px-3 py-1 bg-green-600 hover:bg-green-500 text-white text-xs rounded shadow">
-                   📊 Download Excel Nilai
+                   📊 Download Excel Nilai Pre Test dan Post test
                 </a>
             </div>
         </div>

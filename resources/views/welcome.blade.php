@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Kemendagri - Selamat Datang</title>
-    <link rel="icon" href="{{ asset('img/Subtract.png') }}" type="image/png">
+    <title>Kemendagri - Selamat Datang</title>
+    <link rel="icon" href="{{ asset('img/logokemendagri-fix.png') }}" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -36,13 +36,13 @@
 
     <!-- Main Content -->
     <div class="z-10 text-center px-6 fade-in">
-        <img src="{{ asset('img/Subtract.png') }}" alt="Logo Kemendagri" class="mx-auto w-28 md:w-36 mb-6 drop-shadow-xl">
+        <img src="{{ asset('img/logokemendagri-fix.png') }}" alt="Logo Kemendagri" class="mx-auto w-28 md:w-36 mb-6 drop-shadow-xl">
         <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">
-            Selamat Datang di Portal<br>
+            Selamat Datang di Aplikasi<br>
             <span class="text-yellow-400 drop-shadow">Kementerian Dalam Negeri</span>
         </h1>
         <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-xl mx-auto">
-            Sistem Informasi Manajemen Wilayah untuk pengelolaan data Provinsi, Kabupaten/Kota, Kecamatan, dan Kelurahan.
+            Sistem Pendaftaran Pelatihan Balai Besar Bina Pemerintahan dan Desa di Malang,Silahkan Login/Register Terlebih Dahulu
         </p>
 
         <div class="flex justify-center gap-4 flex-wrap">

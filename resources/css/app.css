@@ -1,3 +1,59 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  @keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .animate-marquee {
+    animation: marquee 8s linear infinite;
+    -webkit-animation: marquee 8s linear infinite;
+}
+
+   @keyframes soft-glow {
+    0%, 100% {
+      text-shadow: 0 0 2px #fef9c3, 0 0 4px #fde68a;
+    }
+    50% {
+      text-shadow: 0 0 4px #fef9c3, 0 0 6px #fde68a;
+    }
+  }
+
+  .animate-soft-glow {
+    animation: soft-glow 8s ease-in-out infinite;
+    -webkit-animation: soft-glow 8s ease-in-out infinite;
+}
+
+
+  @layer utilities {
+  @keyframes pulse-text {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.03); }
+  }
+
+  .animate-pulse-text {
+    animation: pulse-text 2.5s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  @keyframes wave-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      opacity: 1;
+    }
+    20%, 24%, 55% {
+      opacity: 0.4;
+    }
+  }
+
+  .animate-flicker {
+    animation: wave-flicker 3s infinite;
+  }
+}
+
+
+}
+

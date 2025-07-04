@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - Portal Kemendagri</title>
-    <link rel="icon" href="{{ asset('img/Subtract.png') }}" type="image/png">
+    <title>Masuk - Kemendagri</title>
+    <link rel="icon" href="{{ asset('img/logokemendagri-fix.png') }}" type="image/png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body {
@@ -43,7 +43,7 @@
     <!-- Login Card -->
     <div class="w-full max-w-md p-8 rounded-2xl fade-in card-gradient shadow-xl">
         <div class="text-center mb-6">
-            <img src="{{ asset('img/Subtract.png') }}" alt="Logo Kemendagri" class="mx-auto w-16 mb-3 drop-shadow-md">
+            <img src="{{ asset('img/logokemendagri-fix.png') }}" alt="Logo Kemendagri" class="mx-auto w-16 mb-3 drop-shadow-md">
             <h2 class="text-2xl font-bold">Selamat Datang</h2>
             <p class="text-sm text-white/90">Masuk ke portal Kemendagri</p>
         </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konfirmasi Password - Portal Kemendagri</title>
+    <title>Konfirmasi Password - Kemendagri</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
@@ -40,7 +40,7 @@
     <!-- Confirm Password Card -->
     <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl fade-in card-gradient backdrop-blur-sm">
         <div class="text-center mb-6">
-            <img src="{{ asset('img/Subtract.png') }}" alt="Kemendagri" class="mx-auto w-16 mb-3">
+            <img src="{{ asset('img/logokemendagri-fix.png') }}" alt="Kemendagri" class="mx-auto w-16 mb-3">
             <h2 class="text-2xl font-bold">Konfirmasi Password</h2>
             <p class="text-sm text-white/90">Silakan konfirmasi password Anda untuk melanjutkan.</p>
         </div>

@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Admin Panel - Kemendagri Kota Malang</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('img/logokemendagri-fix.png') }}" type="image/png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -14,6 +17,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="bg-gradient-to-tr from-sky-950 to-sky-900 text-white min-h-screen">
 
     <div class="flex min-h-screen">

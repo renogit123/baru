@@ -1,48 +1,53 @@
 <x-user-layout>
-    <div class="max-w-7xl mx-auto px-6 py-10">
-        <div class="bg-white/10 rounded-2xl shadow-xl ring-1 ring-white/10 backdrop-blur-md p-8">
+    <div class="max-w-6xl mx-auto px-6 py-10 space-y-12">
 
-            {{-- Header --}}
-            <div class="mb-8 text-center">
-                <h2 class="text-3xl font-extrabold tracking-tight mb-2">👋 Selamat Datang, {{ Auth::user()->name }}!</h2>
-                <p class="text-white/70 text-lg max-w-2xl mx-auto">
-                    Lengkapi data biodata Anda, daftar pelatihan, dan dapatkan sertifikat resmi dari Kemendagri.
-                </p>
-            </div>
+        {{-- HEADER --}}
+        <div class="space-y-3 animate-fade-in-up">
+            <h1 class="text-4xl font-extrabold text-yellow-300 drop-shadow tracking-wide">
+                👋 Halo, {{ Auth::user()->name }}!
+            </h1>
+            <p class="text-white/80 leading-relaxed max-w-3xl text-lg">
+                Selamat datang di Sistem 
+                <span class="text-yellow-300 font-extrabold tracking-wide">Kementerian Dalam Negeri Kota Malang</span>.
+                Lengkapi <strong>biodata</strong> Anda, daftar <strong>pelatihan</strong>, dan unduh <strong>sertifikat digital</strong> Anda.
+            </p>
+        </div>
 
-            {{-- Informasi Penting --}}
-            <div class="bg-yellow-500/90 text-sky-900 px-6 py-4 rounded-md font-semibold shadow text-center mb-10">
-                🎯 Pastikan biodata Anda lengkap & sudah disetujui untuk bisa mendaftar pelatihan dan mengunduh sertifikat.
-            </div>
+        {{-- INFO STRIP --}}
+        <div class="bg-yellow-400/90 text-sky-900 text-center font-semibold py-3 rounded shadow ring-1 ring-yellow-100 animate-pulse-slow">
+            🎯 <span class="tracking-wide">Pastikan biodata Anda lengkap & telah disetujui untuk dapat mendaftar pelatihan dan mengunduh sertifikat.</span>
+        </div>
 
-            {{-- Aksi Grid --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                {{-- Biodata --}}
-                <a href="{{ route('user.biodata.form') }}"
-                   class="p-6 bg-yellow-500 hover:bg-yellow-400 rounded-xl text-sky-900 font-bold shadow transition transform hover:scale-105 text-center">
-                    📋 Lengkapi Biodata
+        {{-- KARTU MENU UTAMA --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in delay-300">
+            {{-- Biodata --}}
+            <a href="{{ route('user.biodata.form') }}"
+               class="p-6 bg-yellow-400 hover:bg-yellow-300 text-sky-900 font-bold rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all text-center space-y-2">
+                <div class="text-4xl">📋</div>
+                <div>Lengkapi Biodata</div>
+            </a>
+
+            {{-- Pelatihan --}}
+            <a href="{{ route('user.pelatihan.index') }}"
+               class="p-6 bg-yellow-400 hover:bg-yellow-300 text-sky-900 font-bold rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all text-center space-y-2">
+                <div class="text-4xl">📅</div>
+                <div>Lihat Pelatihan</div>
+            </a>
+
+            {{-- Sertifikat --}}
+            @php $biodata = Auth::user()->biodata; @endphp
+            @if($biodata && $biodata->is_approved)
+                <a href="{{ route('sertifikat.generate', auth()->id()) }}" target="_blank"
+                   class="p-6 bg-yellow-400 hover:bg-yellow-300 text-sky-900 font-bold rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all text-center space-y-2">
+                    <div class="text-4xl">🧾</div>
+                    <div>Unduh Sertifikat</div>
                 </a>
-
-                {{-- Pelatihan --}}
-                <a href="{{ route('user.pelatihan.index') }}"
-                   class="p-6 bg-yellow-500 hover:bg-yellow-400 rounded-xl text-sky-900 font-bold shadow transition transform hover:scale-105 text-center">
-                    📅 Lihat Pelatihan
-                </a>
-
-                {{-- Sertifikat --}}
-                @php $biodata = Auth::user()->biodata; @endphp
-                @if($biodata && $biodata->is_approved)
-                    <a href="{{ route('sertifikat.generate', auth()->id()) }}" target="_blank"
-                       class="p-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow transition transform hover:scale-105 text-center">
-                        🧾 Unduh Sertifikat
-                    </a>
-                @elseif($biodata)
-                    <div class="p-6 bg-gray-700 text-white text-sm font-semibold rounded-xl shadow text-center">
-                        🕒 Menunggu ACC Admin
-                    </div>
-                @endif
-            </div>
-
+            @elseif($biodata)
+                <div class="p-6 bg-gray-800/70 text-white rounded-2xl text-center shadow-inner space-y-2">
+                    <div class="text-3xl">⏳</div>
+                    <div class="text-sm font-semibold">Menunggu ACC Admin</div>
+                </div>
+            @endif
         </div>
     </div>
 </x-user-layout>
