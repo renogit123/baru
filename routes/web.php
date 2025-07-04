@@ -146,8 +146,8 @@ Route::put('/admin/pelatihan/{id}/reject', [RegisterPelatihanController::class, 
 
 Route::put('/pelatihan/batal/{id}', [RegisterPelatihanController::class, 'batal'])->name('pelatihan.batal');
 
-Route::post('/admin/biodata/approve/{id}', [\App\Http\Controllers\Admin\BiodataApprovalController::class, 'approve'])->name('admin.biodata.approve');
-Route::put('/admin/biodata/batal/{id}', [\App\Http\Controllers\Admin\BiodataApprovalController::class, 'batal'])->name('admin.biodata.batal');
+Route::post('/admin/biodata/approve/{id}', [BiodataApprovalController::class, 'approve'])->name('admin.biodata.approve');
+Route::put('/admin/biodata/batal/{id}', [BiodataApprovalController::class, 'batal'])->name('admin.biodata.batal');
 
 Route::get('/admin/export-nilai-kosong', [BiodataExportController::class, 'exportKosong'])->name('admin.nilai.kosong');
 
@@ -173,7 +173,7 @@ use App\Http\Controllers\Admin\DaftarTerimaSertifikatController;
 Route::get('/admin/sertifikat/download/{id}', [DaftarTerimaSertifikatController::class, 'export'])
     ->name('admin.sertifikat.download');
 
-Route::get('/admin/jadwal-pelatihan/{id}/hadir', [\App\Http\Controllers\Admin\JadwalPelatihanController::class, 'showHadir'])
+Route::get('/admin/jadwal-pelatihan/{id}/hadir', [JadwalPelatihanController::class, 'showHadir'])
     ->name('admin.jadwal-pelatihan.hadir');
     
     Route::get('/admin/jadwal-pelatihan/{id}/kehadiran', [JadwalPelatihanController::class, 'showHadir'])
