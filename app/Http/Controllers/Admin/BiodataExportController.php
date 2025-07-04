@@ -13,6 +13,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Illuminate\Support\Str;
+use FPDF;
+
 
 
 require_once base_path('vendor/setasign/fpdf/fpdf.php');
@@ -113,97 +115,126 @@ public function exportKosong()
 
 public function exportByJadwal($id)
 {
-    $jadwal = JadwalPelatihan::with('pendaftars.user.biodata')->findOrFail($id);
-
-    // Jika ada query ?format=excel maka export Excel
-    if (request('format') === 'excel') {
-        $filename = 'nilai-pelatihan-' . $jadwal->id . '.xlsx';
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\NilaiPesertaExport($jadwal), $filename);
-    }
-
-    // PDF generation
-    $pdf = new \FPDF('L', 'mm', 'A4');
+    $jadwal = JadwalPelatihan::with(['kabupatenkota', 'provinsi', 'pendaftars.user.biodata'])->findOrFail($id);
+    $pdf = new CustomPDF('L', 'mm', 'A4');
     $pdf->AddPage();
 
-    // Logo kiri atas
+    // Logo dan header
     $logoPath = public_path('img/logo-kemendagri.png');
     if (file_exists($logoPath)) {
         $pdf->Image($logoPath, 19, 5, 20);
     }
-
-    // Header
     $pdf->SetFont('Arial', '', 10);
     $pdf->SetXY(40, 10);
     $pdf->Cell(0, 5, 'KEMENTERIAN DALAM NEGERI REPUBLIK INDONESIA', 0, 1, 'L');
-
-    $pdf->SetFont('Arial', 'B', 10);
+    $pdf->SetFont('Arial', '', 10);
     $pdf->SetX(40);
     $pdf->Cell(0, 5, 'BALAI BESAR PEMERINTAHAN DESA DI MALANG', 0, 1, 'L');
 
+    // Judul utama
     $pdf->Ln(10);
-
     $pdf->SetFont('Arial', 'B', 14);
-    $pdf->Cell(0, 8, 'DAFTAR NILAI PRE TEST DAN POST TEST', 0, 1, 'C');
-    $pdf->Cell(0, 8, 'PELATIHAN TEKNIS PENYUSUNAN LAPORAN PENYELENGGARAAN PEMERINTAHAN DESA TAHUN 2024', 0, 1, 'C');
-    $pdf->Cell(0, 8, 'KABUPATEN HALMAHERA TENGAH PROVINSI MALUKU UTARA', 0, 1, 'C');
+    $pdf->Cell(0, 8, 'DAFTAR HADIR', 0, 1, 'C');
+
+    // Tambahan baris judul pelatihan
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->MultiCell(0, 8, strtoupper($jadwal->judul), 0, 'C');
+
+    // Tambahan baris kabupaten/provinsi sesuai logika
+    $namaKabupaten = strtoupper($jadwal->kabupatenkota->nama ?? '-');
+    $provinsi = strtoupper($jadwal->provinsi->nama ?? '-');
+
+    if (Str::startsWith(strtolower($namaKabupaten), 'kota')) {
+        $labelWilayah = $namaKabupaten;
+    } else {
+        $labelWilayah = 'KABUPATEN ' . $namaKabupaten;
+    }
+
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Cell(0, 8, $labelWilayah . ' PROVINSI ' . $provinsi, 0, 1, 'C');
+
+    // Detail pelatihan
+    $tanggal = \Carbon\Carbon::parse($jadwal->tgl_mulai)->translatedFormat('l, d F Y');
+    $pdf->SetFont('Arial', 'B', 11);
+    $pdf->Cell(0, 7, 'HARI / TANGGAL           : ' . $tanggal, 0, 1, 'L');
+    $pdf->Cell(0, 7, 'WAKTU                           :', 0, 1, 'L');
+    $pdf->Cell(0, 7, 'MATERI                          : ' . strtoupper($jadwal->judul), 0, 1, 'L');
+    $pdf->Cell(0, 7, 'TENAGA PENGAJAR    :', 0, 1, 'L');
+
     $pdf->Ln(4);
 
-    // Tanggal
-    $tanggal = \Illuminate\Support\Carbon::now()->translatedFormat('d F Y');
-    $pdf->SetFont('Arial', '', 8);
-    $pdf->Cell(0, 2, 'Tanggal, ' . $tanggal, 0, 1, 'L');
-    $pdf->Ln(2);
-
-    // Header tabel baris 1
+    // Header tabel
     $pdf->SetFont('Arial', 'B', 11);
     $pdf->Cell(10, 14, 'NO', 1, 0, 'C');
-    $pdf->Cell(60, 14, 'NAMA', 1, 0, 'C');
-    $pdf->Cell(15, 14, 'L/P', 1, 0, 'C');
-    $pdf->Cell(100, 14, 'JABATAN', 1, 0, 'C');
-    $pdf->Cell(60, 7, 'N I L A I', 1, 1, 'C');
+    $pdf->Cell(80, 14, 'NAMA LENGKAP', 1, 0, 'C');
+    $pdf->Cell(15, 14, 'L / P', 1, 0, 'C');
+    $pdf->Cell(110, 14, 'JABATAN DAN ASAL PESERTA', 1, 0, 'C');
+    $pdf->Cell(50, 14, 'TANDA TANGAN', 1, 1, 'C');
 
-    // Header tabel baris 2 (subheader nilai)
-    $pdf->SetX(195);
-    $pdf->Cell(30, 7, 'PRE TEST', 1, 0, 'C');
-    $pdf->Cell(30, 7, 'POST TEST', 1, 1, 'C');
-
-    // Isi tabel
+    // Data peserta
     $pdf->SetFont('Arial', '', 11);
     $no = 1;
     foreach ($jadwal->pendaftars as $peserta) {
         if ($peserta->status_peserta !== 'approved') continue;
-
         $bio = $peserta->user->biodata;
         if (!$bio) continue;
 
+        $nama = strtoupper($bio->nama);
         $jk = strtolower($bio->jenis_kelamin) === 'perempuan' ? 'P' : 'L';
+        $jabatan = $bio->jabatan ?? '-';
+        $asal = $bio->alamat ?? '-';
+        $textJabatanAsal = $jabatan . ' - ' . $asal;
 
-        $pdf->Cell(10, 10, $no++, 1, 0, 'C');
-        $pdf->Cell(60, 10, strtoupper($bio->nama), 1, 0);
-        $pdf->Cell(15, 10, $jk, 1, 0, 'C');
-        $pdf->Cell(100, 10, $bio->jabatan, 1, 0);
-        $pdf->Cell(30, 10, '', 1, 0); // Pre Test
-        $pdf->Cell(30, 10, '', 1, 1); // Post Test
+        $cellNo = 10;
+        $cellNama = 80;
+        $cellJk = 15;
+        $cellAsal = 110;
+        $cellTtd = 50;
+
+        $lineCount = max(
+            $pdf->NbLines($cellNama, $nama),
+            $pdf->NbLines($cellAsal, $textJabatanAsal)
+        );
+        $rowHeight = $lineCount * 9;
+        $xStart = $pdf->GetX();
+        $yStart = $pdf->GetY();
+
+        // NO
+        $pdf->Cell($cellNo, $rowHeight, $no++, 1, 0, 'C');
+
+        // NAMA
+        $pdf->SetXY($xStart + $cellNo, $yStart);
+        $pdf->MultiCell($cellNama, 6, $nama, 0, 'L');
+        $pdf->Rect($xStart + $cellNo, $yStart, $cellNama, $rowHeight);
+
+        // JENIS KELAMIN
+        $pdf->SetXY($xStart + $cellNo + $cellNama, $yStart);
+        $pdf->Cell($cellJk, $rowHeight, $jk, 1, 0, 'C');
+
+        // JABATAN DAN ASAL
+        $pdf->SetXY($xStart + $cellNo + $cellNama + $cellJk, $yStart);
+        $pdf->MultiCell($cellAsal, 6, $textJabatanAsal, 0, 'L');
+        $pdf->Rect($xStart + $cellNo + $cellNama + $cellJk, $yStart, $cellAsal, $rowHeight);
+
+        // TANDA TANGAN
+        $pdf->SetXY($xStart + $cellNo + $cellNama + $cellJk + $cellAsal, $yStart);
+        $pdf->Cell($cellTtd, $rowHeight, '', 1, 1);
     }
 
-    // Baris rata-rata
+    // TTD Ketua Kelas
+    $pdf->Ln(20);
     $pdf->SetFont('Arial', 'B', 11);
-    $pdf->Cell(185, 10, 'RATA-RATA', 1, 0, 'C');
-    $pdf->Cell(30, 10, '', 1, 0);
-    $pdf->Cell(30, 10, '', 1, 1);
-
-    $pdf->Ln(4);
-    $pdf->SetFont('Arial', 'B', 10);
-    $pdf->Cell(0, 6, 'KATEGORI PENILAIAN', 0, 1);
-    $pdf->Cell(0, 6, '81 - 100  :  Sangat Baik', 0, 1);
-    $pdf->Cell(0, 6, '71 - 80    :  Baik', 0, 1);
-    $pdf->Cell(0, 6, '56 - 70    :  Cukup', 0, 1);
-    $pdf->Cell(0, 6, '< 56        :  Kurang', 0, 1);
+    $pdf->Cell(0, 6, '       KETUA KELAS,', 0, 1, 'L');
+    $pdf->Ln(15);
+    $pdf->SetFont('Arial', '', 11);
+    $pdf->Cell(0, 6, '(....................................)', 0, 1, 'L');
 
     return response()->streamDownload(function () use ($pdf) {
         $pdf->Output();
-    }, 'nilai-pelatihan-' . $jadwal->id . '.pdf');
+    }, 'daftar-hadir-pelatihan-' . $id . '.pdf');
 }
+
+
 
 public function exportExcelByJadwal($id)
 {
@@ -335,9 +366,9 @@ public function exportExcelByJadwal($id)
     $row++;
     $kategori = [
         '81 - 100  :  Sangat Baik',
-        '71 - 80   :  Baik',
-        '56 - 70   :  Cukup',
-        '< 56      :  Kurang',
+        '71 - 80    :  Baik',
+        '56 - 70    :  Cukup',
+        '< 56         :  Kurang',
     ];
     foreach ($kategori as $k) {
         $sheet->setCellValue("A{$row}", $k);
@@ -357,4 +388,51 @@ public function exportExcelByJadwal($id)
     return response()->download($tempPath, $filename)->deleteFileAfterSend(true);
 }
 
+}
+class CustomPDF extends FPDF
+{
+    public function NbLines($w, $txt)
+    {
+        $cw = &$this->CurrentFont['cw'];
+        if ($w == 0)
+            $w = $this->w - $this->rMargin - $this->x;
+        $wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
+        $s = str_replace("\r", '', $txt);
+        $nb = strlen($s);
+        if ($nb > 0 && $s[$nb - 1] == "\n")
+            $nb--;
+        $sep = -1;
+        $i = 0;
+        $j = 0;
+        $l = 0;
+        $nl = 1;
+        while ($i < $nb) {
+            $c = $s[$i];
+            if ($c == "\n") {
+                $i++;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+                continue;
+            }
+            if ($c == ' ')
+                $sep = $i;
+            $l += $cw[$c] ?? 0;
+            if ($l > $wmax) {
+                if ($sep == -1) {
+                    if ($i == $j)
+                        $i++;
+                } else
+                    $i = $sep + 1;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+            } else {
+                $i++;
+            }
+        }
+        return $nl;
+    }
 }
