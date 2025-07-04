@@ -144,8 +144,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::put('/admin/pelatihan/{id}/reject', [RegisterPelatihanController::class, 'reject'])->name('admin.pelatihan.reject');
 
-Route::put('/pelatihan/batal/{id}', [RegisterPelatihanController::class, 'batal'])->name('pelatihan.batal');
-
 Route::post('/admin/biodata/approve/{id}', [BiodataApprovalController::class, 'approve'])->name('admin.biodata.approve');
 Route::put('/admin/biodata/batal/{id}', [BiodataApprovalController::class, 'batal'])->name('admin.biodata.batal');
 
