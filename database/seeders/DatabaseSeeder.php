@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
     'name' => 'admin',
     'email' => 'admin@gmail.com',
+    'role' => 'admin',
     'password' => Hash::make('admin123'), // Ganti dengan password yang kamu inginkan
     'is_admin' => true, // Pastikan kolom ini ada di tabel users
 ]);

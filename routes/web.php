@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\BiodataApprovalController;
 use App\Http\Controllers\Admin\BiodataExportController;
 use App\Http\Controllers\Admin\SertifikatTextController;
 use App\Http\Controllers\Admin\DaftarTerimaController;
+use App\Http\Controllers\Admin\DaftarTerimaSertifikatController;
 
 
 // Halaman awal
@@ -105,6 +106,11 @@ Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
     Route::post('/pelatihan/{id}/daftar', [PelatihanUserController::class, 'daftar'])->name('pelatihan.daftar');
 });
 
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/sertifikat/download-perkelas/{id}', [DaftarTerimaSertifikatController::class, 'exportByKelas'])
+        ->name('sertifikat.download.perkelas');
+});
+
 // Sertifikat
 Route::get('/sertifikat/{id}', [SertifikatController::class, 'generate'])->name('sertifikat.generate')->middleware('auth');
 Route::get('/user/barcode', [BarcodeController::class, 'index'])->name('user.qrcode');
@@ -166,7 +172,6 @@ Route::get('/admin/biodata/export-nilai-kosong', [BiodataExportController::class
     Route::get('/admin/jadwal/{id}/export', [BiodataExportController::class, 'exportByJadwal'])->name('admin.jadwal.export');
 Route::get('/admin/jadwal/{id}/export-excel', [BiodataExportController::class, 'exportExcelByJadwal'])->name('admin.jadwal.export.excel');
 
-use App\Http\Controllers\Admin\DaftarTerimaSertifikatController;
 
 Route::get('/admin/sertifikat/download/{id}', [DaftarTerimaSertifikatController::class, 'export'])
     ->name('admin.sertifikat.download');
@@ -176,5 +181,38 @@ Route::get('/admin/jadwal-pelatihan/{id}/hadir', [JadwalPelatihanController::cla
     
     Route::get('/admin/jadwal-pelatihan/{id}/kehadiran', [JadwalPelatihanController::class, 'showHadir'])
     ->name('admin.jadwal-pelatihan.hadir');
+
+    Route::post('/admin/jadwal-pelatihan', [JadwalPelatihanController::class, 'store'])->name('admin.jadwal-pelatihan.store');
+
+Route::get('admin/sertifikat/download/kelas/{id}', [DaftarTerimaSertifikatController::class, 'exportByKelas'])
+    ->name('admin.sertifikat.download.perkelas');
+
+    Route::get('admin/sertifikat/download-perkelas/{id}', [DaftarTerimaSertifikatController::class, 'exportByKelas'])
+    ->name('admin.sertifikat.download.perkelas');
+
+    Route::post('/admin/jadwal-pelatihan', [JadwalPelatihanController::class, 'store'])->name('admin.jadwal-pelatihan.store');
+
+    Route::get('admin/sertifikat/download-perkelas/{id}', [DaftarTerimaSertifikatController::class, 'exportByKelas'])
+    ->name('admin.sertifikat.download.perkelas');
+
+    Route::get('admin/sertifikat/download-perkelas/{id}', [
+    DaftarTerimaSertifikatController::class,
+    'exportByKelas',
+    ])->name('admin.sertifikat.download.perkelas');
+
+Route::get('/admin/sertifikat/download/kelas/{id}', [DaftarTerimaSertifikatController::class, 'exportByKelas'])
+    ->name('admin.sertifikat.download.perkelas');
+
+    Route::get('/admin/sertifikat/download/kelas/{id}', [DaftarTerimaSertifikatController::class, 'exportByKelas'])
+    ->name('admin.sertifikat.download.perkelas');
+
+    Route::get('/admin/sertifikat/download/perkelas/{id}', [DaftarTerimaSertifikatController::class, 'exportByKelas'])
+    ->name('admin.sertifikat.download.perkelas');
+
+    Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
+    Route::get('/absen', [ScanAbsenController::class, 'form'])->name('scan.form');
+    Route::post('/absen', [ScanAbsenController::class, 'proses'])->name('scan.proses');
+    Route::get('/absen/daftar-hadir', [ScanAbsenController::class, 'daftarHadir'])->name('scan.hadir');
+});
 // Auth scaffolding
 require __DIR__ . '/auth.php';
