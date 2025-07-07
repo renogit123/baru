@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Kelurahan;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,9 +16,12 @@ class DatabaseSeeder extends Seeder
     {
         // Buat user contoh
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+    'name' => 'admin',
+    'email' => 'admin@gmail.com',
+    'password' => Hash::make('admin123'), // Ganti dengan password yang kamu inginkan
+    'is_admin' => true, // Pastikan kolom ini ada di tabel users
+]);
+
 
         // Jalankan semua seeder yang dibutuhkan
         $this->call([

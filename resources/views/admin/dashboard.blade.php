@@ -30,11 +30,14 @@
 
 <div class="bg-white/5 backdrop-blur-lg rounded-xl p-4 shadow text-white">
     <h2 class="text-lg font-bold mb-2">📢 Informasi Sistem</h2>
-    <ul class="list-disc list-inside text-white/80 space-y-1 text-sm">
-        <li>Sistem terakhir diperbarui: <span class="font-semibold text-yellow-300">{{ now()->format('d M Y') }}</span></li>
+    <ul class="list-disc list-outside text-white/80 space-y-1 text-sm text-justify pl-5">
+        <li>Sistem terakhir diperbarui: 
+            <span class="font-semibold text-yellow-300">{{ now()->format('d F Y') }}</span>
+        </li>
         <li>Gunakan fitur scan QR untuk absensi peserta.</li>
         <li>Admin dapat menambahkan pelatihan baru di menu "Pelatihan".</li>
     </ul>
 </div>
+
 
 </x-admin-layout>
