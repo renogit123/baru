@@ -75,8 +75,8 @@
         </div>
 
         {{-- Tengah: Info Marquee --}}
-        <div class="overflow-hidden w-full md:flex-1">
-            <div class="animate-marquee whitespace-nowrap text-sm text-white/90 font-medium tracking-wide">
+        <div class="overflow-hidden w-full md:flex-1 marquee-wrapper">
+    <div class="animate-marquee text-sm font-medium text-transparent bg-clip-text text-white tracking-wide">
                 ✨ Selamat Datang di Sistem Informasi Pelatihan Balai Besar Kemendagri - Kota Malang ✨ Silakan Login atau Daftar untuk Mengikuti Pelatihan ✨
             </div>
         </div>
@@ -97,15 +97,24 @@
 </nav>
 
 <style>
-@keyframes marquee {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-}
-.animate-marquee {
+    @keyframes marquee {
+        0% { transform: translateX(85%); }
+        100% { transform: translateX(-100%); }
+    }
+
+    .marquee-wrapper {
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .animate-marquee {
     display: inline-block;
-    animation: marquee 25s linear infinite;
+    animation: marquee 10s linear infinite;
 }
+
 </style>
+
 
 
     <!-- Hero -->
@@ -132,25 +141,39 @@
 
     <!-- Fitur -->
     <section class="relative z-10 py-10 px-6 max-w-6xl mx-auto fade-in">
-        <h2 class="text-2xl font-semibold text-center text-white mb-10">Fitur Utama</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white/10 border border-white/20 rounded-lg p-6 text-center hover:bg-white/20 transition-all">
-                <div class="text-yellow-400 text-4xl mb-4">📋</div>
-                <h3 class="text-xl font-bold mb-2">Pendaftaran Mudah</h3>
-                <p class="text-gray-200 text-sm">Daftar akun, lengkapi biodata, dan langsung ikuti pelatihan.</p>
-            </div>
-            <div class="bg-white/10 border border-white/20 rounded-lg p-6 text-center hover:bg-white/20 transition-all">
-                <div class="text-yellow-400 text-4xl mb-4">🎓</div>
-                <h3 class="text-xl font-bold mb-2">Pelatihan Terstruktur</h3>
-                <p class="text-gray-200 text-sm">Materi oleh Balai Besar Kemendagri & narasumber profesional.</p>
-            </div>
-            <div class="bg-white/10 border border-white/20 rounded-lg p-6 text-center hover:bg-white/20 transition-all">
-                <div class="text-yellow-400 text-4xl mb-4">📄</div>
-                <h3 class="text-xl font-bold mb-2">Sertifikat Resmi</h3>
-                <p class="text-gray-200 text-sm">Dapatkan sertifikat digital setelah menyelesaikan pelatihan.</p>
-            </div>
-        </div>
-    </section>
+    <h2 class="text-2xl font-semibold text-center text-yellow-400 mb-10">Fitur Utama</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Fitur 1: Pendaftaran Mudah -->
+        <a href="{{ route('register') }}"
+           onclick="return confirm('Silakan daftar terlebih dahulu untuk mengikuti pelatihan. Lanjut ke halaman pendaftaran?')"
+           class="bg-white/10 border border-white/20 rounded-lg p-6 text-center hover:bg-white/20 transition-all block cursor-pointer">
+            <div class="text-yellow-400 text-4xl mb-4">📋</div>
+            <h3 class="text-xl font-bold mb-2">Pendaftaran Mudah</h3>
+            <p class="text-gray-200 text-sm">Daftar akun, lengkapi biodata, dan langsung ikuti pelatihan.</p>
+        </a>
+
+        <!-- Fitur 2: Pelatihan Terstruktur -->
+        <a href="{{ route('register') }}"
+           onclick="return confirm('Silakan daftar terlebih dahulu untuk mengikuti pelatihan. Lanjut ke halaman pendaftaran?')"
+           class="bg-white/10 border border-white/20 rounded-lg p-6 text-center hover:bg-white/20 transition-all block cursor-pointer">
+            <div class="text-yellow-400 text-4xl mb-4">🎓</div>
+            <h3 class="text-xl font-bold mb-2">Pelatihan Terstruktur</h3>
+            <p class="text-gray-200 text-sm">Materi oleh Balai Besar Kemendagri & narasumber profesional.</p>
+        </a>
+
+        <!-- Fitur 3: Sertifikat Resmi -->
+        <a href="{{ route('register') }}"
+           onclick="return confirm('Silakan daftar terlebih dahulu untuk mengikuti pelatihan. Lanjut ke halaman pendaftaran?')"
+           class="bg-white/10 border border-white/20 rounded-lg p-6 text-center hover:bg-white/20 transition-all block cursor-pointer">
+            <div class="text-yellow-400 text-4xl mb-4">📄</div>
+            <h3 class="text-xl font-bold mb-2">Sertifikat Resmi</h3>
+            <p class="text-gray-200 text-sm">Dapatkan sertifikat digital setelah menyelesaikan pelatihan.</p>
+        </a>
+
+    </div>
+</section>
+
 
     <!-- Galeri Slider -->
    <section class="relative w-full min-h-screen bg-black bg-transparent px-6 py-10" id="videoSlider">

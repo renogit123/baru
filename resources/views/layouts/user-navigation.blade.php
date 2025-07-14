@@ -12,7 +12,7 @@
 
         {{-- Running Text --}}
         <div class="overflow-hidden w-full sm:w-auto flex-1 sm:mx-1">
-            <div class="whitespace-nowrap animate-marquee text-sm font-semibold text-yellow-300">
+            <div class="whitespace-nowrap animate-marquee text-sm font-semibold text-white">
                 Selamat Datang di Sistem Kemendagri Kota Malang — Silakan Lengkapi Biodata dan Daftar Pelatihan!
             </div>
         </div>
