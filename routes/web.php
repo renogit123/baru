@@ -216,6 +216,7 @@ Route::get('/admin/sertifikat/download/kelas/{id}', [DaftarTerimaSertifikatContr
 });
 
 Route::get('/admin/jadwal/{id}/hadir', [JadwalPelatihanController::class, 'showHadir'])->name('admin.jadwal-pelatihan.showHadir');
+Route::get('admin/biodata/excel', [BiodataUserController::class, 'exportExcelBiodata'])->name('admin.biodata.excel');
 
 // Auth scaffolding
 require __DIR__ . '/auth.php';

@@ -5,15 +5,31 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Kelurahan;
-use App\Models\Biodata;
 use Illuminate\Http\Request;
+use App\Exports\BiodataLengkapExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BiodataUserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('biodata')->get();
-        return view('admin.biodata.index', compact('users'));
+        $query = User::with('biodata')
+            ->whereHas('biodata')
+            ->orderBy('name', 'asc'); // urut abjad
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhereHas('biodata', function ($sub) use ($search) {
+                      $sub->where('nik', 'like', "%{$search}%")
+                          ->orWhere('jabatan', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $users = $query->paginate(7)->appends(['search' => $search]);
+
+        return view('admin.biodata.index', compact('users', 'search'));
     }
 
     public function edit($id)
@@ -45,12 +61,10 @@ class BiodataUserController extends Controller
             'pendidikan' => 'required|string',
             'no_telp' => 'required|string|max:20',
         ]);
-    
+
         $user = User::findOrFail($id);
-    
-        // Ambil data wilayah lengkap
         $desa = Kelurahan::with('kecamatan.kabupatenKota.provinsi')->findOrFail($request->id_desa);
-    
+
         $user->biodata()->updateOrCreate(
             ['user_id' => $user->id],
             $validated + [
@@ -62,18 +76,21 @@ class BiodataUserController extends Controller
                 'kode_desa' => $desa->kode,
             ]
         );
-    
+
         return redirect()->route('admin.user.biodata.index')->with('success', 'Biodata berhasil diperbarui.');
     }
-    
-    public function destroy($id)
-{
-    $user = User::findOrFail($id);
 
-    if ($user->biodata) {
-        $user->biodata->delete();
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->biodata) {
+            $user->biodata->delete();
+        }
+        return redirect()->back()->with('success', 'Biodata berhasil dihapus.');
     }
 
-    return redirect()->back()->with('success', 'Biodata berhasil dihapus.');
-}
+    public function exportExcelBiodata()
+    {
+        return Excel::download(new BiodataLengkapExport, 'biodata-peserta.xlsx');
+    }
 }
