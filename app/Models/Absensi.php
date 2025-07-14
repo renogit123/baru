@@ -31,4 +31,5 @@ class Absensi extends Model
     {
         return $this->register?->jadwalPelatihan(); // relasi tidak langsung
     }
+    
 }

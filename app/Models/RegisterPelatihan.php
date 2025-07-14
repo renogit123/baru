@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\Absensi;
 use Illuminate\Database\Eloquent\Model;
 
 class RegisterPelatihan extends Model
@@ -22,5 +22,9 @@ class RegisterPelatihan extends Model
 {
     return $this->belongsTo(\App\Models\JadwalPelatihan::class, 'jadwal_pelatihan_id');
 }
-    
+public function absensis()
+{
+    return $this->hasMany(Absensi::class, 'register_pelatihan_id');
+}
+
 }

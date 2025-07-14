@@ -24,8 +24,8 @@
         <div class="flex items-center space-x-2">
             <label for="tanggal" class="text-white text-sm">📅 Filter Tanggal:</label>
             <input type="date" name="tanggal" id="tanggal"
-                   value="{{ request('tanggal') }}"
-                   class="text-sm px-3 py-1 rounded border border-white/20 bg-white/10 text-white placeholder:text-white/40">
+                value="{{ request('tanggal', \Carbon\Carbon::now()->format('Y-m-d')) }}"
+                class="text-sm px-3 py-1 rounded border border-white/20 bg-white/10 text-white placeholder:text-white/40">
             <button type="submit"
                     class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 text-sm">
                 🔍 Tampilkan
@@ -56,10 +56,9 @@
                     @endphp
 
                     @if(isset($jadwal) && isset($jadwal->id))
-                        <a href="{{ route('admin.sertifikat.download', $jadwal->id) }}"
-                           class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500 text-sm">
-                            ⬇ Download PDF Daftar Terima Sertifikat
-                        </a>
+                    <a href="{{ route('admin.sertifikat.download', ['id' => $jadwal->id, 'tanggal' => request('tanggal')]) }}">
+                        ⬇ Download PDF
+                    </a>
                     @endif
                 </div>
 
