@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center">
             <h2 class="text-xl font-semibold text-white">📝 Daftar Kehadiran Peserta</h2>
             <a href="{{ route('admin.jadwal-pelatihan.index') }}"
-               class="text-sm text-white/70 hover:underline">⬅️ Kembali</a>
+               class="text-sm text-white/70 hover:underline">⬅ Kembali</a>
         </div>
     </x-slot>
 
@@ -36,26 +36,6 @@
             </a>
         </div>
     </form>
-@php
-    $jadwal = optional($data->first()->jadwalPelatihan ?? null);
-@endphp
-
-@if(isset($jadwal) && isset($jadwal->id))
-    <div class="mb-4">
-        <a href="{{ route('admin.sertifikat.download', $jadwal->id) }}"
-           class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500 text-sm">
-            ⬇️ Download PDF Daftar Terima Sertifikat
-        </a>
-    </div>
-@endif
-
-
-    <div class="p-6 bg-white/5 text-white rounded shadow border border-white/10 backdrop-blur">
-        @if(session('success'))
-            <div class="mb-4 bg-green-600/30 border border-green-400 text-green-200 px-4 py-2 rounded">
-                {{ session('success') }}
-            </div>
-        @endif
 
     @if($data->isEmpty())
         <div class="p-6 bg-white/5 text-white rounded shadow border border-white/10 backdrop-blur">
