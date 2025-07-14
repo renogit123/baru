@@ -51,31 +51,35 @@
         </div>
 
         {{-- INFO PELATIHAN --}}
-        <div class="bg-gradient-to-r from-yellow-500/10 to-white/5 border border-yellow-100/20 backdrop-blur-md p-6 rounded-xl shadow-md ring-1 ring-white/10 animate-fade-in">
-            <h2 class="text-xl font-bold text-yellow-300 mb-4">📢 Pelatihan Aktif</h2>
+<div class="bg-gradient-to-r from-yellow-500/10 to-white/5 border border-yellow-100/20 backdrop-blur-md p-6 rounded-xl shadow-md ring-1 ring-white/10 animate-fade-in">
+    <h2 class="text-xl font-bold text-yellow-300 mb-4">📢 Pelatihan Aktif</h2>
 
-            <ul class="space-y-3 text-white/90 text-sm">
-                <li class="flex gap-3 items-start">
-                    <span class="text-yellow-400 text-lg">📌</span>
-                    <div>
-                        <strong>Pelatihan Dasar Pemerintahan Desa</strong><br>
-                        <span class="text-white/70">15–18 Juli 2025 • Balai Besar Kemendagri Malang</span>
-                    </div>
-                </li>
-                <li class="flex gap-3 items-start">
-                    <span class="text-yellow-400 text-lg">📌</span>
-                    <div>
-                        <strong>Manajemen Keuangan Desa</strong><br>
-                        <span class="text-white/70">22–25 Juli 2025 • Zoom Meeting</span>
-                    </div>
-                </li>
-            </ul>
+    <ul class="space-y-5 text-white text-sm">
+        @forelse($pelatihans as $pelatihan)
+            <li class="flex items-start gap-3">
+                <div class="text-yellow-400 text-xl">📌</div>
+                <div class="space-y-1">
+                    <h3 class="font-semibold text-base text-white">{{ $pelatihan->judul }}</h3>
+                    <p class="text-white/70">
+                        {{ \Carbon\Carbon::parse($pelatihan->tgl_mulai)->translatedFormat('d') }}–{{ \Carbon\Carbon::parse($pelatihan->tgl_selesai)->translatedFormat('d F Y') }}
+                        • Pelatihan dilaksanakan sesuai jadwal
+                    </p>
+                    <p class="text-white/70">
+                        Segera daftar untuk mendapatkan tempat. Kuota terbatas!
+                    </p>
+                </div>
+            </li>
+        @empty
+            <li class="text-white italic">Belum ada pelatihan aktif saat ini.</li>
+        @endforelse
+    </ul>
 
-            <div class="mt-5 text-right">
-                <a href="{{ route('user.pelatihan.index') }}"
-                   class="text-sm text-yellow-300 font-semibold hover:underline">🔍 Lihat semua pelatihan &rarr;</a>
-            </div>
-        </div>
+    <div class="mt-5 text-right">
+        <a href="{{ route('user.pelatihan.index') }}"
+           class="text-sm text-yellow-300 font-semibold hover:underline">🔍 Lihat semua pelatihan &rarr;</a>
+    </div>
+</div>
+
 
         {{-- TENTANG APLIKASI --}}
         <div class="bg-white/5 backdrop-blur border border-white/10 p-6 rounded-xl shadow-lg animate-fade-in">

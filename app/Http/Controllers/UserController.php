@@ -4,21 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\JadwalPelatihan;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
-    // Tambahkan method index()
+    // Dashboard User - menampilkan 3 pelatihan terdekat
     public function index()
-    {
-        // Kembalikan view user dashboard; buat file resources/views/user/dashboard.blade.php
-        return view('user.dashboard');
-    }
-
-    public function showForm()
 {
-    $biodata = Auth::user()->biodata; // ✅ BENAR jika relasi 'biodata' sudah ada di model User
- // asumsi user punya relasi `biodata`
-    return view('user.biodata.form', compact('biodata'));
+    $pelatihans = JadwalPelatihan::where('status', true)
+                    ->where('tgl_selesai', '>=', Carbon::now())
+                    ->orderBy('tgl_mulai', 'asc')
+                    ->take(3)
+                    ->get();
+
+    return view('user.dashboard', compact('pelatihans'));
 }
-    
+
+
+    // Form biodata user
+    public function showForm()
+    {
+        $biodata = Auth::user()->biodata; // asumsi relasi 'biodata' sudah benar di model User
+        return view('user.biodata.form', compact('biodata'));
+    }
 }

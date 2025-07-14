@@ -1,4 +1,4 @@
-<nav class="bg-gradient-to-r from-blue-800 via-blue-600 to-gray-300 text-black shadow-2xl sticky top-0 z-50">
+<nav class="bg-gradient-to-r from-blue-900 via-blue-800 to-yellow-500/80 text-black shadow-2xl sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
 
         {{-- Logo dan Teks --}}
