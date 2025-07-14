@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\BiodataApprovalController;
 use App\Http\Controllers\Admin\BiodataExportController;
 use App\Http\Controllers\Admin\SertifikatTextController;
 use App\Http\Controllers\Admin\DaftarTerimaController;
+use App\Http\Controllers\Admin\DaftarTerimaSertifikatController;
 
 
 // Halaman awal
@@ -166,7 +167,6 @@ Route::get('/admin/biodata/export-nilai-kosong', [BiodataExportController::class
     Route::get('/admin/jadwal/{id}/export', [BiodataExportController::class, 'exportByJadwal'])->name('admin.jadwal.export');
 Route::get('/admin/jadwal/{id}/export-excel', [BiodataExportController::class, 'exportExcelByJadwal'])->name('admin.jadwal.export.excel');
 
-use App\Http\Controllers\Admin\DaftarTerimaSertifikatController;
 
 Route::get('/admin/sertifikat/download/{id}', [DaftarTerimaSertifikatController::class, 'export'])
     ->name('admin.sertifikat.download');

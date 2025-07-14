@@ -63,23 +63,50 @@
     </div>
 
     <!-- Navbar -->
-    <nav class="bg-gradient-to-r from-blue-800 to-yellow-600 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
-            <div class="flex items-center space-x-3">
-                <img src="{{ asset('img/logokemendagri-fix.png') }}" alt="Logo" class="h-12 w-12 drop-shadow-lg">
-                <span class="text-white font-extrabold text-2xl tracking-wide bg-gradient-to-r from-yellow-300 via-white to-yellow-100 bg-clip-text text-transparent">KEMENDAGRI</span>
-            </div>
-            <div class="overflow-hidden w-full md:w-auto flex-1 md:mx-6">
-                <div class="whitespace-nowrap animate-marquee text-sm font-semibold text-white/90">
-                    Selamat Datang di Sistem Pelatihan Balai Besar Kemendagri - Kota Malang. Silakan Login atau Daftar untuk Mengikuti Pelatihan.
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-semibold bg-white text-blue-900 rounded-md hover:bg-yellow-100 transition shadow">Masuk</a>
-                <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-semibold border border-white/40 text-white hover:bg-white/10 rounded-md transition shadow">Daftar</a>
+    <nav class="bg-gradient-to-r from-blue-900 via-blue-800 to-yellow-500/80 text-white shadow-xl sticky top-0 z-50 backdrop-blur-md border-b border-yellow-300/30">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
+
+        {{-- Kiri: Logo dan Judul --}}
+        <div class="flex items-center space-x-3">
+            <img src="{{ asset('img/logokemendagri-fix.png') }}" alt="Logo" class="h-12 w-11">
+            <h1 class="text-2xl font-extrabold tracking-widest bg-gradient-to-r from-yellow-300 via-white to-yellow-200 bg-clip-text text-transparent drop-shadow-md">
+                KEMENDAGRI
+            </h1>
+        </div>
+
+        {{-- Tengah: Info Marquee --}}
+        <div class="overflow-hidden w-full md:flex-1">
+            <div class="animate-marquee whitespace-nowrap text-sm text-white/90 font-medium tracking-wide">
+                ✨ Selamat Datang di Sistem Informasi Pelatihan Balai Besar Kemendagri - Kota Malang ✨ Silakan Login atau Daftar untuk Mengikuti Pelatihan ✨
             </div>
         </div>
-    </nav>
+
+        {{-- Kanan: Tombol --}}
+        <div class="flex gap-2">
+            <a href="{{ route('login') }}"
+               class="px-4 py-2 text-sm font-semibold rounded-md bg-indigo-700 hover:bg-blue-400 hover:text-white transition-all shadow-lg ring-1 ring-white/10">
+               🔐 Masuk
+            </a>
+            <a href="{{ route('register') }}"
+               class="px-4 py-2 text-sm font-semibold rounded-md border border-white/20 text-white hover:bg-yellow-200 hover:text-blue-900 transition-all shadow-lg ring-1 ring-white/10">
+               📝 Daftar
+            </a>
+        </div>
+
+    </div>
+</nav>
+
+<style>
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+.animate-marquee {
+    display: inline-block;
+    animation: marquee 25s linear infinite;
+}
+</style>
+
 
     <!-- Hero -->
     <section class="flex flex-col items-center justify-center pt-32 pb-20 text-center px-6 relative z-10 fade-in">
@@ -90,12 +117,8 @@
         </h1>
         <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-xl">
             Sistem Pendaftaran Pelatihan Balai Besar Bina Pemerintahan dan Desa di Malang.<br>
-            Silakan Login atau Register terlebih dahulu.
+            
         </p>
-        <div class="flex justify-center gap-4 flex-wrap mb-10">
-            <a href="{{ route('login') }}" class="px-6 py-2 rounded-full bg-yellow-400 text-blue-900 font-semibold hover:bg-yellow-300 transition-all shadow-md">Masuk</a>
-            <a href="{{ route('register') }}" class="px-6 py-2 rounded-full border border-white/30 text-white hover:bg-white/10 transition-all">Daftar</a>
-        </div>
     </section>
 
     <!-- Tentang Aplikasi -->
@@ -130,19 +153,59 @@
     </section>
 
     <!-- Galeri Slider -->
-    <section class="relative z-10 py-16 px-6 max-w-6xl mx-auto fade-in">
-        <h2 class="text-2xl font-semibold text-center text-yellow-400 mb-10">Galeri Kegiatan</h2>
-        <div class="slider-container rounded-lg overflow-hidden shadow-lg border border-white/20">
-            <div class="slider-track">
-                <img src="{{ asset('img/slide1.jpg') }}" alt="Slide 1">
-                <img src="{{ asset('img/slide2.jpg') }}" alt="Slide 2">
-                <img src="{{ asset('img/slide3.jpg') }}" alt="Slide 3">
-                <img src="{{ asset('img/slide4.jpg') }}" alt="Slide 4">
-                <img src="{{ asset('img/slide5.jpg') }}" alt="Slide 5">
-                <img src="{{ asset('img/slide1.jpg') }}" alt="Slide Ulang">
+   <section class="relative w-full min-h-screen bg-black bg-transparent px-6 py-10" id="videoSlider">
+
+    <!-- Judul -->
+    <div class="relative z-20 mb-8">
+        <h2 class="text-2xl font-semibold text-center text-yellow-400 drop-shadow">
+            🎞️View Kota Malang
+        </h2>
+    </div>
+
+    <!-- Video Slider -->
+    <div class="relative z-20 overflow-hidden rounded-2xl shadow-2xl border border-white/10" class="absolute inset-0 z-10 cursor-pointer" onclick="nextVideo()">
+        <div class="w-full transition-transform duration-700 ease-in-out flex" id="videoTrack">
+            <!-- Slide 1 -->
+            <div class="w-full flex-shrink-0">
+                <video src="{{ asset('video/malang.mp4') }}" autoplay muted loop class="w-full h-[60vh] object-cover rounded-2xl"></video>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="w-full flex-shrink-0">
+                <video src="{{ asset('video/video2.mp4') }}" autoplay muted loop class="w-full h-[60vh] object-cover rounded-2xl"></video>
             </div>
         </div>
-    </section>
+    </div>
+
+    <!-- Indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex space-x-3">
+        <div class="w-3 h-3 rounded-full bg-white/60" id="dot0"></div>
+        <div class="w-3 h-3 rounded-full bg-white/30" id="dot1"></div>
+    </div>
+</section>
+
+
+<script>
+    let currentVideo = 0;
+    const videoTrack = document.getElementById('videoTrack');
+    const dots = [document.getElementById('dot0'), document.getElementById('dot1')];
+
+    function showVideo(index) {
+        videoTrack.style.transform = `translateX(-${index * 100}%)`;
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('bg-white/60', i === index);
+            dot.classList.toggle('bg-white/30', i !== index);
+        });
+    }
+
+    function nextVideo() {
+        currentVideo = (currentVideo + 1) % 2;
+        showVideo(currentVideo);
+    }
+    
+</script>
+
+
 
     <!-- FAQ -->
     <section class="relative z-10 py-16 px-6 max-w-5xl mx-auto fade-in">

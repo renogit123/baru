@@ -1,10 +1,10 @@
-<nav class="bg-gradient-to-r from-blue-800 to-yellow-600 text-white shadow-2xl sticky top-0 z-50">
+<nav class="bg-gradient-to-r from-blue-800 via-blue-600 to-gray-300 text-black shadow-2xl sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
 
         {{-- Logo dan Teks --}}
         <div class="flex items-center space-x-2">
             <img src="{{ asset('img/logokemendagri-fix.png') }}" alt="Kemendagri Logo" class="h-12.5 w-12 drop-shadow-lg">
-            <span class="font-extrabold text-2xl bg-gradient-to-r from-yellow-300 via-white to-yellow-100 bg-clip-text text-transparent tracking-wider drop-shadow">
+            <span class="font-extrabold text-2xl bg-gradient-to-r from-yellow-400 via-yellow-200 to-white bg-clip-text text-transparent tracking-wider drop-shadow">
             KEMENDAGRI
             </span>
 
@@ -12,7 +12,7 @@
 
         {{-- Running Text --}}
         <div class="overflow-hidden w-full sm:w-auto flex-1 sm:mx-1">
-            <div class="whitespace-nowrap animate-marquee text-sm font-semibold text-yellow-200">
+            <div class="whitespace-nowrap animate-marquee text-sm font-semibold text-yellow-300">
                 Selamat Datang di Sistem Kemendagri Kota Malang — Silakan Lengkapi Biodata dan Daftar Pelatihan!
             </div>
         </div>

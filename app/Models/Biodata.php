@@ -48,4 +48,5 @@ public function kelurahan()
     return $this->belongsTo(Kelurahan::class, 'id_desa');
 }
 
+
 }
