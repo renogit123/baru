@@ -10,24 +10,25 @@ class Absensi extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'jadwal_pelatihan_id',
+        'register_pelatihan_id',
         'tanggal_absen',
+        'jam',
+        'status_kehadiran',
     ];
 
+    public function register()
+    {
+        return $this->belongsTo(RegisterPelatihan::class, 'register_pelatihan_id');
+    }
+
+    // Optional: jika masih ingin relasi lain
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->register?->user(); // relasi tidak langsung
     }
 
     public function jadwalPelatihan()
     {
-        return $this->belongsTo(JadwalPelatihan::class);
+        return $this->register?->jadwalPelatihan(); // relasi tidak langsung
     }
-
-    public function registerPelatihan()
-{
-    return $this->belongsTo(RegisterPelatihan::class);
-}
-
 }
