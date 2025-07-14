@@ -93,12 +93,24 @@ class JadwalPelatihanController extends Controller
         return view('admin.jadwal.show', compact('jadwal'));
     }
 
-    public function showHadir($id)
+public function showHadir($id, Request $request)
 {
-    $jadwal = \App\Models\JadwalPelatihan::with(['pendaftars.user.biodata'])->findOrFail($id);
-    $data = $jadwal->pendaftars;
+    $tanggal = $request->input('tanggal', \Carbon\Carbon::today()->toDateString());
 
-    return view('admin.scan.hadir', compact('data', 'jadwal'));
+    $jadwal = JadwalPelatihan::with([
+        'pendaftars.user.biodata',
+        'pendaftars.absensis' // penting agar bisa filter absensi
+    ])->findOrFail($id);
+
+    $filteredPendaftar = $jadwal->pendaftars->filter(function ($pendaftar) use ($tanggal) {
+        return $pendaftar->absensis->where('tanggal_absen', $tanggal)->isNotEmpty();
+    });
+
+    return view('admin.jadwal.show', [
+        'jadwal' => $jadwal,
+        'pendaftars' => $filteredPendaftar,
+        'tanggal' => $tanggal
+    ]);
 }
 
     

@@ -215,7 +215,7 @@ Route::get('/admin/sertifikat/download/kelas/{id}', [DaftarTerimaSertifikatContr
     Route::get('/absen/daftar-hadir', [ScanAbsenController::class, 'daftarHadir'])->name('scan.hadir');
 });
 
-Route::post('/admin/jadwal-pelatihan', [JadwalPelatihanController::class, 'store'])->name('admin.jadwal-pelatihan.store');
+Route::get('/admin/jadwal/{id}/hadir', [JadwalPelatihanController::class, 'showHadir'])->name('admin.jadwal-pelatihan.showHadir');
 
 // Auth scaffolding
 require __DIR__ . '/auth.php';

@@ -14,6 +14,9 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Illuminate\Support\Str;
 use FPDF;
+use Illuminate\Http\Request;
+use App\Models\Absensi;
+
 
 
 
@@ -113,126 +116,143 @@ public function exportKosong()
 }
 
 
-public function exportByJadwal($id)
-{
-    $jadwal = JadwalPelatihan::with(['kabupatenkota', 'provinsi', 'pendaftars.user.biodata'])->findOrFail($id);
-    $pdf = new CustomPDF('P', 'mm', 'A4'); // Potrait
-    $pdf->AddPage();
+    public function exportByJadwal(Request $request, $id)
+    {
+        $tanggal = $request->query('tanggal');
 
-    // Logo dan header
-    $logoPath = public_path('img/logo-kemendagri.png');
-    if (file_exists($logoPath)) {
-        $pdf->Image($logoPath, 15, 5, 20);
+        $jadwal = JadwalPelatihan::with([
+            'kabupatenkota', 'provinsi', 'pendaftars.user.biodata', 'pendaftars.absensis'
+        ])->findOrFail($id);
+
+        $pdf = new CustomPDF('P', 'mm', 'A4');
+        $pdf->AddPage();
+
+        $logoPath = public_path('img/logo-kemendagri.png');
+        if (file_exists($logoPath)) {
+            $pdf->Image($logoPath, 15, 5, 20);
+        }
+
+        $pdf->SetFont('Arial', '', 10);
+        $pdf->SetXY(40, 10);
+        $pdf->Cell(0, 5, 'KEMENTERIAN DALAM NEGERI REPUBLIK INDONESIA', 0, 1, 'L');
+        $pdf->SetX(40);
+        $pdf->Cell(0, 5, 'BALAI BESAR PEMERINTAHAN DESA DI MALANG', 0, 1, 'L');
+        $pdf->Ln(10);
+
+        $pdf->SetFont('Arial', 'B', 13);
+        $pdf->Cell(0, 8, 'DAFTAR HADIR', 0, 1, 'C');
+
+        $pdf->SetFont('Arial', 'B', 11);
+        $pdf->MultiCell(0, 8, strtoupper($jadwal->judul), 0, 'C');
+
+        $namaKabupaten = strtoupper($jadwal->kabupatenkota->nama ?? '-');
+        $provinsi = strtoupper($jadwal->provinsi->nama ?? '-');
+        $labelWilayah = Str::startsWith(strtolower($namaKabupaten), 'kota') ? $namaKabupaten : 'KABUPATEN ' . $namaKabupaten;
+        $pdf->Cell(0, 8, $labelWilayah . ' PROVINSI ' . $provinsi, 0, 1, 'C');
+
+        $tanggalFormat = $tanggal ? Carbon::parse($tanggal)->translatedFormat('l, d F Y') : Carbon::parse($jadwal->tgl_mulai)->translatedFormat('l, d F Y');
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(0, 7, 'HARI / TANGGAL          : ' . $tanggalFormat, 0, 1, 'L');
+        $pdf->Cell(0, 7, 'WAKTU                          : ' . ($jadwal->jam_mulai ? Carbon::parse($jadwal->jam_mulai)->format('H:i') : '-') . ' s/d ' . ($jadwal->jam_selesai ? Carbon::parse($jadwal->jam_selesai)->format('H:i') : '-'), 0, 1, 'L');
+        $pdf->Cell(35, 7, 'MATERI', 0, 0, 'L');
+        $pdf->Cell(5, 7, '    : ', 0, 0, 'L');
+        $pdf->MultiCell(0, 7, strtoupper($jadwal->judul), 0, 'L');
+        $pdf->Cell(0, 7, 'TENAGA PENGAJAR   :', 0, 1, 'L');
+
+        $pdf->Ln(4);
+
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(10, 12, 'NO', 1, 0, 'C');
+        $pdf->Cell(60, 12, 'NAMA LENGKAP', 1, 0, 'C');
+        $pdf->Cell(13, 12, 'L / P', 1, 0, 'C');
+        $pdf->Cell(72, 12, 'JABATAN DAN ASAL PESERTA', 1, 0, 'C');
+        $pdf->Cell(30, 12, 'TANDA TANGAN', 1, 1, 'C');
+
+        $pdf->SetFont('Arial', '', 10);
+        $no = 1;
+
+        foreach ($jadwal->pendaftars as $peserta) {
+            if ($peserta->status_peserta !== 'approved') continue;
+            if (!$peserta->absensis->where('tanggal_absen', $tanggal)->count()) continue;
+
+            $bio = $peserta->user->biodata;
+            if (!$bio) continue;
+
+            $nama = strtoupper($bio->nama);
+            $jk = strtolower($bio->jenis_kelamin) === 'perempuan' ? 'P' : 'L';
+            $jabatan = $bio->jabatan ?? '-';
+            $asal = $bio->alamat ?? '-';
+            $textJabatanAsal = $jabatan . ' - ' . $asal;
+
+            $cw_no = 10;
+            $cw_nama = 60;
+            $cw_jk = 13;
+            $cw_asal = 72;
+            $cw_ttd = 30;
+
+            $lineCount = max(
+                $pdf->NbLines($cw_nama, $nama),
+                $pdf->NbLines($cw_asal, $textJabatanAsal)
+            );
+            $rowHeight = $lineCount * 6;
+
+            $x = $pdf->GetX();
+            $y = $pdf->GetY();
+
+            $pdf->Cell($cw_no, $rowHeight, $no++, 1, 0, 'C');
+
+            $pdf->SetXY($x + $cw_no, $y);
+            $pdf->MultiCell($cw_nama, 6, $nama, 0, 'L');
+            $pdf->Rect($x + $cw_no, $y, $cw_nama, $rowHeight);
+
+            $pdf->SetXY($x + $cw_no + $cw_nama, $y);
+            $pdf->Cell($cw_jk, $rowHeight, $jk, 1, 0, 'C');
+
+            $pdf->SetXY($x + $cw_no + $cw_nama + $cw_jk, $y);
+            $pdf->MultiCell($cw_asal, 6, $textJabatanAsal, 0, 'L');
+            $pdf->Rect($x + $cw_no + $cw_nama + $cw_jk, $y, $cw_asal, $rowHeight);
+
+            $pdf->SetXY($x + $cw_no + $cw_nama + $cw_jk + $cw_asal, $y);
+            $pdf->Cell($cw_ttd, $rowHeight, '', 1, 1);
+        }
+
+        $pdf->Ln(18);
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(0, 6, '       KETUA KELAS,', 0, 1, 'L');
+        $pdf->Ln(12);
+        $pdf->SetFont('Arial', '', 10);
+        $pdf->Cell(0, 6, '(....................................)', 0, 1, 'L');
+
+        return response()->streamDownload(function () use ($pdf) {
+            $pdf->Output();
+        }, 'daftar-hadir-filtered.pdf');
     }
-    $pdf->SetFont('Arial', '', 10);
-    $pdf->SetXY(40, 10);
-    $pdf->Cell(0, 5, 'KEMENTERIAN DALAM NEGERI REPUBLIK INDONESIA', 0, 1, 'L');
-    $pdf->SetX(40);
-    $pdf->Cell(0, 5, 'BALAI BESAR PEMERINTAHAN DESA DI MALANG', 0, 1, 'L');
 
-    // Judul utama
-    $pdf->Ln(10);
-    $pdf->SetFont('Arial', 'B', 13);
-    $pdf->Cell(0, 8, 'DAFTAR HADIR', 0, 1, 'C');
-
-    // Judul pelatihan
-    $pdf->SetFont('Arial', 'B', 11);
-    $pdf->MultiCell(0, 8, strtoupper($jadwal->judul), 0, 'C');
-
-    // Wilayah
-    $namaKabupaten = strtoupper($jadwal->kabupatenkota->nama ?? '-');
-    $provinsi = strtoupper($jadwal->provinsi->nama ?? '-');
-    $labelWilayah = Str::startsWith(strtolower($namaKabupaten), 'kota') ? $namaKabupaten : 'KABUPATEN ' . $namaKabupaten;
-    $pdf->Cell(0, 8, $labelWilayah . ' PROVINSI ' . $provinsi, 0, 1, 'C');
-
-    // Detail pelatihan
-    $tanggal = \Carbon\Carbon::parse($jadwal->tgl_mulai)->translatedFormat('l, d F Y');
-    $pdf->SetFont('Arial', 'B', 10);
-    $pdf->Cell(0, 7, 'HARI / TANGGAL          : ' . $tanggal, 0, 1, 'L');
-    $pdf->Cell(0, 7, 'WAKTU                          : ' . ($jadwal->jam_mulai ? \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i') : '-') . ' s/d ' . ($jadwal->jam_selesai ? \Carbon\Carbon::parse($jadwal->jam_selesai)->format('H:i') : '-'), 0, 1, 'L');
-    $pdf->SetFont('Arial', 'B', 10);
-    $pdf->Cell(35, 7, 'MATERI', 0, 0, 'L'); // Label
-    $pdf->Cell(5, 7, '    : ', 0, 0, 'L'); // Titik dua
-    $pdf->SetFont('Arial', 'B', 10);
-    $pdf->MultiCell(0, 7, strtoupper($jadwal->judul), 0, 'L'); // Isi panjang
-    $pdf->Cell(0, 7, 'TENAGA PENGAJAR   :', 0, 1, 'L');
-
-    $pdf->Ln(4);
-
-    // Header tabel (lebih ramping untuk muat di potrait)
-    $pdf->SetFont('Arial', 'B', 10);
-    $pdf->Cell(10, 12, 'NO', 1, 0, 'C');
-    $pdf->Cell(60, 12, 'NAMA LENGKAP', 1, 0, 'C');
-    $pdf->Cell(13, 12, 'L / P', 1, 0, 'C');
-    $pdf->Cell(72, 12, 'JABATAN DAN ASAL PESERTA', 1, 0, 'C');
-    $pdf->Cell(30, 12, 'TANDA TANGAN', 1, 1, 'C');
-
-    // Data peserta
-    $pdf->SetFont('Arial', '', 10);
-    $no = 1;
-    foreach ($jadwal->pendaftars as $peserta) {
-        if ($peserta->status_peserta !== 'approved') continue;
-        $bio = $peserta->user->biodata;
-        if (!$bio) continue;
-
-        $nama = strtoupper($bio->nama);
-        $jk = strtolower($bio->jenis_kelamin) === 'perempuan' ? 'P' : 'L';
-        $jabatan = $bio->jabatan ?? '-';
-        $asal = $bio->alamat ?? '-';
-        $textJabatanAsal = $jabatan . ' - ' . $asal;
-
-        // Lebar sel
-        $cw_no = 10;
-        $cw_nama = 60;
-        $cw_jk = 13;
-        $cw_asal = 72;
-        $cw_ttd = 30;
-
-        $lineCount = max(
-            $pdf->NbLines($cw_nama, $nama),
-            $pdf->NbLines($cw_asal, $textJabatanAsal)
-        );
-        $rowHeight = $lineCount * 6;
-
-        $x = $pdf->GetX();
-        $y = $pdf->GetY();
-
-        $pdf->Cell($cw_no, $rowHeight, $no++, 1, 0, 'C');
-
-        $pdf->SetXY($x + $cw_no, $y);
-        $pdf->MultiCell($cw_nama, 6, $nama, 0, 'L');
-        $pdf->Rect($x + $cw_no, $y, $cw_nama, $rowHeight);
-
-        $pdf->SetXY($x + $cw_no + $cw_nama, $y);
-        $pdf->Cell($cw_jk, $rowHeight, $jk, 1, 0, 'C');
-
-        $pdf->SetXY($x + $cw_no + $cw_nama + $cw_jk, $y);
-        $pdf->MultiCell($cw_asal, 6, $textJabatanAsal, 0, 'L');
-        $pdf->Rect($x + $cw_no + $cw_nama + $cw_jk, $y, $cw_asal, $rowHeight);
-
-        $pdf->SetXY($x + $cw_no + $cw_nama + $cw_jk + $cw_asal, $y);
-        $pdf->Cell($cw_ttd, $rowHeight, '', 1, 1);
+public function exportExcelByJadwal(Request $request, $id)
+{
+    $tanggal = $request->query('tanggal'); // Ambil tanggal dari query
+    if (!$tanggal) {
+        return back()->with('error', 'Tanggal absen tidak boleh kosong.');
     }
 
-    // TTD Ketua Kelas
-    $pdf->Ln(18);
-    $pdf->SetFont('Arial', 'B', 10);
-    $pdf->Cell(0, 6, '       KETUA KELAS,', 0, 1, 'L');
-    $pdf->Ln(12);
-    $pdf->SetFont('Arial', '', 10);
-    $pdf->Cell(0, 6, '(....................................)', 0, 1, 'L');
+    $jadwal = JadwalPelatihan::with([
+        'pendaftars.user.biodata',
+        'provinsi',
+        'kabupatenkota'
+    ])->findOrFail($id);
 
-    return response()->streamDownload(function () use ($pdf) {
-        $pdf->Output();
-    }, 'daftar-hadir-pelatihan-' . $id . '.pdf');
-}
+    // Filter peserta yang hadir di tanggal tersebut
+    $pendaftars = $jadwal->pendaftars->filter(function ($peserta) use ($tanggal) {
+        return $peserta->status_peserta === 'approved' &&
+            Absensi::where('register_pelatihan_id', $peserta->id)
+                ->whereDate('tanggal_absen', $tanggal)
+                ->exists();
+    });
 
-public function exportExcelByJadwal($id)
-{
-    $jadwal = JadwalPelatihan::with(['pendaftars.user.biodata', 'provinsi', 'kabupatenkota'])->findOrFail($id);
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
 
+    // Logo
     $logoPath = public_path('img/logo-kemendagri.png');
     if (file_exists($logoPath)) {
         $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
@@ -260,18 +280,15 @@ public function exportExcelByJadwal($id)
     $kabupatenkotaNama = strtoupper($jadwal->kabupatenkota->nama ?? '');
     $provinsiNama = strtoupper($jadwal->provinsi->nama ?? '');
 
-    if (Str::startsWith($kabupatenkotaNama, 'KOTA')) {
-        $wilayahLine = "{$kabupatenkotaNama} PROVINSI {$provinsiNama}";
-    } else {
-        $wilayahLine = "KABUPATEN {$kabupatenkotaNama} PROVINSI {$provinsiNama}";
-    }
-
+    $wilayahLine = Str::startsWith($kabupatenkotaNama, 'KOTA')
+        ? "{$kabupatenkotaNama} PROVINSI {$provinsiNama}"
+        : "KABUPATEN {$kabupatenkotaNama} PROVINSI {$provinsiNama}";
     $sheet->setCellValue('A6', $wilayahLine);
 
     $sheet->getStyle('A4:A6')->getFont()->setBold(true)->setSize(13);
     $sheet->getStyle('A4:A6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-    $sheet->setCellValue('A8', 'Tanggal, ' . Carbon::now()->translatedFormat('d F Y'));
+    $sheet->setCellValue('A8', 'Tanggal Absen: ' . \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y'));
     $sheet->getStyle('A8')->getFont()->setSize(10);
 
     $sheet->setCellValue('A10', 'NO');
@@ -309,8 +326,7 @@ public function exportExcelByJadwal($id)
     $postSum = 0;
     $nilaiCount = 0;
 
-    foreach ($jadwal->pendaftars as $peserta) {
-        if ($peserta->status_peserta !== 'approved') continue;
+    foreach ($pendaftars as $peserta) {
         $bio = $peserta->user->biodata;
         if (!$bio) continue;
 
@@ -372,7 +388,7 @@ public function exportExcelByJadwal($id)
     }
 
     $writer = new Xlsx($spreadsheet);
-    $filename = 'nilai-pelatihan-' . $jadwal->id . '.xlsx';
+    $filename = 'nilai-pelatihan-' . $jadwal->id . '-tgl-' . $tanggal . '.xlsx';
     $tempPath = tempnam(sys_get_temp_dir(), $filename);
     $writer->save($tempPath);
 
