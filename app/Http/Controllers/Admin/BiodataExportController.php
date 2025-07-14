@@ -12,6 +12,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use App\Models\RegisterPelatihan;
 use Illuminate\Support\Str;
 use FPDF;
 use Illuminate\Http\Request;
@@ -171,9 +172,12 @@ public function exportKosong()
         $pdf->SetFont('Arial', '', 10);
         $no = 1;
 
-        foreach ($jadwal->pendaftars as $peserta) {
-            if ($peserta->status_peserta !== 'approved') continue;
-            if (!$peserta->absensis->where('tanggal_absen', $tanggal)->count()) continue;
+foreach ($jadwal->pendaftars as $peserta) {
+    if ($peserta->status_peserta !== 'approved') continue;
+
+    // Filter peserta yang tanggal daftar sesuai tanggal filter
+    if ($tanggal && \Carbon\Carbon::parse($peserta->created_at)->toDateString() !== $tanggal) continue;
+
 
             $bio = $peserta->user->biodata;
             if (!$bio) continue;
@@ -230,24 +234,19 @@ public function exportKosong()
 
 public function exportExcelByJadwal(Request $request, $id)
 {
-    $tanggal = $request->query('tanggal'); // Ambil tanggal dari query
+    $tanggal = $request->query('tanggal');
     if (!$tanggal) {
-        return back()->with('error', 'Tanggal absen tidak boleh kosong.');
+        return back()->with('error', 'Tanggal tidak boleh kosong.');
     }
 
-    $jadwal = JadwalPelatihan::with([
-        'pendaftars.user.biodata',
-        'provinsi',
-        'kabupatenkota'
-    ])->findOrFail($id);
+    $jadwal = JadwalPelatihan::with(['provinsi', 'kabupatenkota'])->findOrFail($id);
 
-    // Filter peserta yang hadir di tanggal tersebut
-    $pendaftars = $jadwal->pendaftars->filter(function ($peserta) use ($tanggal) {
-        return $peserta->status_peserta === 'approved' &&
-            Absensi::where('register_pelatihan_id', $peserta->id)
-                ->whereDate('tanggal_absen', $tanggal)
-                ->exists();
-    });
+    // GANTI bagian ini agar TIDAK mengambil dari absensis
+    $pendaftars = RegisterPelatihan::with('user.biodata')
+        ->where('jadwal_pelatihan_id', $id)
+        ->where('status_peserta', 'approved')
+        ->whereDate('created_at', $tanggal) // atau sesuaikan dengan field tanggal mana yang ingin difilter
+        ->get();
 
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();

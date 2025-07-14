@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\JadwalPelatihan;
 use App\Models\JadwalPelatihanBaru;
 use App\Models\Provinsi;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class JadwalPelatihanController extends Controller
-{   
+{
     public function index()
     {
         $jadwals = JadwalPelatihan::with(['provinsi', 'kabupatenkota'])->latest()->get();
@@ -81,37 +81,33 @@ class JadwalPelatihanController extends Controller
         return redirect()->route('admin.jadwal-pelatihan.index')->with('success', 'Jadwal berhasil dihapus');
     }
 
-    public function pendaftar($id)
-    {
-        $jadwal = JadwalPelatihan::with('pendaftars.user.biodata')->findOrFail($id);
-        return view('admin.jadwal-pelatihan.pendaftar', compact('jadwal'));
-    }
-
-    public function show($id)
-    {
-        $jadwal = JadwalPelatihan::with(['pendaftars.user.biodata'])->findOrFail($id);
-        return view('admin.jadwal.show', compact('jadwal'));
-    }
-
-public function showHadir($id, Request $request)
+  public function show($id)
 {
-    $tanggal = $request->input('tanggal', \Carbon\Carbon::today()->toDateString());
+    $jadwal = JadwalPelatihan::with(['pendaftars.user.biodata'])->findOrFail($id);
 
-    $jadwal = JadwalPelatihan::with([
-        'pendaftars.user.biodata',
-        'pendaftars.absensis' // penting agar bisa filter absensi
-    ])->findOrFail($id);
-
-    $filteredPendaftar = $jadwal->pendaftars->filter(function ($pendaftar) use ($tanggal) {
-        return $pendaftar->absensis->where('tanggal_absen', $tanggal)->isNotEmpty();
-    });
+    $tanggal = now()->toDateString(); // Atau bisa pakai null jika tidak difilter
 
     return view('admin.jadwal.show', [
         'jadwal' => $jadwal,
-        'pendaftars' => $filteredPendaftar,
-        'tanggal' => $tanggal
+        'pendaftars' => $jadwal->pendaftars,
+        'tanggal' => $tanggal, // ✅ tambahkan ini agar tidak error
     ]);
 }
 
-    
+
+ public function showHadir($id, Request $request)
+{
+    $tanggal = $request->input('tanggal', now()->toDateString());
+
+    $jadwal = JadwalPelatihan::with(['provinsi', 'kabupatenkota'])->findOrFail($id);
+
+    // Ambil peserta berdasarkan jadwal & tanggal created_at (bukan absensi)
+    $pendaftars = \App\Models\RegisterPelatihan::with(['user.biodata'])
+        ->where('jadwal_pelatihan_id', $id)
+        ->whereDate('created_at', $tanggal)
+        ->get();
+
+    return view('admin.jadwal.show', compact('jadwal', 'pendaftars', 'tanggal'));
+}
+
 }

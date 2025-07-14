@@ -8,10 +8,10 @@ class RegisterPelatihan extends Model
 {
     protected $fillable = ['user_id', 'jadwal_pelatihan_id', 'status_peserta', 'status_kehadiran'];
 
-    public function user()
-    {
-        return $this->belongsTo(\App\Models\User::class);
-    }
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
 
     public function jadwal()
     {
@@ -22,8 +22,9 @@ class RegisterPelatihan extends Model
 {
     return $this->belongsTo(\App\Models\JadwalPelatihan::class, 'jadwal_pelatihan_id');
 }
-    public function absensis()
+public function absensis()
 {
-    return $this->hasMany(\App\Models\Absensi::class, 'register_pelatihan_id');
+    return $this->hasMany(Absensi::class, 'register_pelatihan_id');
 }
+
 }

@@ -25,10 +25,10 @@ protected $fillable = [
     'kabupaten_id',
 ];
 
-    public function pendaftars()
-    {
-        return $this->hasMany(RegisterPelatihan::class, 'jadwal_pelatihan_id');
-    }
+public function pendaftars()
+{
+    return $this->hasMany(RegisterPelatihan::class, 'jadwal_pelatihan_id');
+}
 
     public function registers()
     {
