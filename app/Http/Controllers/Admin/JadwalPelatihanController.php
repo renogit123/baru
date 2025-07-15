@@ -81,18 +81,12 @@ class JadwalPelatihanController extends Controller
         return redirect()->route('admin.jadwal-pelatihan.index')->with('success', 'Jadwal berhasil dihapus');
     }
 
-  public function show($id)
+ public function show($id)
 {
-    $jadwal = JadwalPelatihan::with(['pendaftars.user.biodata'])->findOrFail($id);
-
-    $tanggal = now()->toDateString(); // Atau bisa pakai null jika tidak difilter
-
-    return view('admin.jadwal.show', [
-        'jadwal' => $jadwal,
-        'pendaftars' => $jadwal->pendaftars,
-        'tanggal' => $tanggal, // ✅ tambahkan ini agar tidak error
-    ]);
+    $today = now()->toDateString();
+    return redirect()->route('admin.jadwal-pelatihan.showHadir', ['id' => $id, 'tanggal' => $today]);
 }
+
 
 
  public function showHadir($id, Request $request)

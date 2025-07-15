@@ -16,10 +16,12 @@ class Absensi extends Model
         'status_kehadiran',
     ];
 
-    public function register()
-    {
-        return $this->belongsTo(RegisterPelatihan::class, 'register_pelatihan_id');
-    }
+// App\Models\Absensi
+public function register()
+{
+    return $this->belongsTo(RegisterPelatihan::class, 'register_pelatihan_id');
+}
+
 
     // Optional: jika masih ingin relasi lain
     public function user()
