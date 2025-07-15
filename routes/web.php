@@ -56,6 +56,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->grou
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/wilayah', [AdminController::class, 'wilayah'])->name('wilayah');
 
+    Route::get('/admin/wilayah', [WilayahController::class, 'index'])->name('admin.wilayah');
+
     Route::get('/provinsi', [ProvinsiController::class, 'index'])->name('provinsi.index');
     Route::resource('provinsi', ProvinsiController::class)->only(['store', 'update', 'destroy']);
 

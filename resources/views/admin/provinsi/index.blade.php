@@ -88,7 +88,7 @@
                                             <td class="px-4 py-2 text-sm text-white/90">{{ data_get($item, $col) }}</td>
                                         @endforeach
                                         <td class="px-4 py-2 text-sm space-x-2">
-                                            <a href="{{ route('admin.wilayah', [$table['editVar'] => $item->id]) }}" class="px-3 py-1 bg-yellow-300 text-xs rounded hover:bg-yellow-400 text-blue-900">✏️ Edit</a>
+                                            <a href="{{ route('admin.provinsi.index', ['editProvinsi' => $item->id]) }}" class="px-3 py-1 bg-yellow-300 text-xs rounded hover:bg-yellow-400 text-blue-900">✏ Edit</a>
                                             <form method="POST" action="{{ route('admin.' . $table['action'] . '.destroy', $item->id) }}" class="inline-block" onsubmit="return confirm('Hapus data ini?')">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="px-3 py-1 bg-red-500 text-xs rounded hover:bg-red-600">🗑️ Hapus</button>

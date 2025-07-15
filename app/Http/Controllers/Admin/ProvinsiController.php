@@ -39,10 +39,21 @@ class ProvinsiController extends Controller
         return redirect()->route('admin.provinsi.index')->with('success', 'Provinsi berhasil dihapus.');
     }
 
-    public function index()
+    public function index(Request $request)
 {
-    $provinsis = Provinsi::latest()->paginate(10);
-    return view('admin.provinsi.index', compact('provinsis'));
+    $provinsis = Provinsi::query()
+        ->when($request->search_provinsi, function ($query) use ($request) {
+            $query->where('nama', 'like', '%' . $request->search_provinsi . '%');
+        })
+        ->paginate(10);
+
+    // Ambil data provinsi yang sedang diedit
+    $editProvinsi = null;
+    if ($request->has('editProvinsi')) {
+        $editProvinsi = Provinsi::find($request->editProvinsi);
+    }
+
+    return view('admin.provinsi.index', compact('provinsis', 'editProvinsi'));
 }
 
 }

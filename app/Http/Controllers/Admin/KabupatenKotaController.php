@@ -9,20 +9,33 @@ use Illuminate\Http\Request;
 
 class KabupatenKotaController extends Controller
 {
-    public function index()
-    {
-        $provinsis = Provinsi::all();
-        $kabupatens = KabupatenKota::with('provinsi')
-            ->when(request('search_kabupaten_kota'), function ($query) {
-                $query->where('nama', 'like', '%' . request('search_kabupaten_kota') . '%');
-            })
-            ->latest()
-            ->paginate(10);
+    public function index(Request $request)
+{
+    // Ambil semua data provinsi (untuk dropdown select)
+    $provinsis = Provinsi::all();
 
-        $editKabupaten = request('edit_kabupaten_kota') ? KabupatenKota::find(request('edit_kabupaten_kota')) : null;
+    // Ambil data kabupaten + filter pencarian jika ada
+    $kabupatens = KabupatenKota::with('provinsi')
+        ->when($request->search_kabupaten_kota, function ($query) use ($request) {
+            $query->where('nama', 'like', '%' . $request->search_kabupaten_kota . '%');
+        })
+        ->latest()
+        ->paginate(10);
 
-        return view('admin.kabupaten.index', compact('kabupatens', 'provinsis', 'editKabupaten'));
+    // Ambil data edit jika ada parameter edit_kabupaten_kota
+    $editKabupaten = null;
+    if ($request->has('edit_kabupaten_kota')) {
+        $editKabupaten = KabupatenKota::find($request->edit_kabupaten_kota);
+
+        // Jika data tidak ditemukan, kembalikan ke index tanpa parameter
+        if (!$editKabupaten) {
+            return redirect()->route('admin.kabupaten-kota.index')
+                ->with('error', 'Data Kabupaten/Kota tidak ditemukan.');
+        }
     }
+
+    return view('admin.kabupaten.index', compact('kabupatens', 'provinsis', 'editKabupaten'));
+}
 
     public function store(Request $request)
     {
@@ -37,23 +50,33 @@ class KabupatenKotaController extends Controller
         return redirect()->route('admin.kabupaten-kota.index')->with('success', 'Kabupaten/Kota berhasil ditambahkan.');
     }
 
-    public function update(Request $request, KabupatenKota $kabupatenKota)
-    {
-        $request->validate([
-            'provinsi_id' => 'required|exists:provinsis,id',
-            'nama'        => 'required|string|max:255',
-            'kode'        => 'nullable|string|max:50',
-        ]);
+    public function update(Request $request, $id)
+{
+    $kabupaten = KabupatenKota::findOrFail($id);
 
-        $kabupatenKota->update($request->only('provinsi_id', 'nama', 'kode'));
+    $request->validate([
+        'provinsi_id' => 'required|exists:provinsis,id',
+        'nama' => 'required|string|max:255',
+        'kode' => 'required|string|max:10',
+    ]);
 
-        return redirect()->route('admin.kabupaten-kota.index')->with('success', 'Kabupaten/Kota berhasil diperbarui.');
-    }
+    $kabupaten->update([
+        'provinsi_id' => $request->provinsi_id,
+        'nama' => $request->nama,
+        'kode' => $request->kode,
+    ]);
 
-    public function destroy(KabupatenKota $kabupatenKota)
-    {
-        $kabupatenKota->delete();
+    return redirect()->route('admin.kabupaten-kota.index')
+        ->with('success', 'Data berhasil diperbarui.');
+}
 
-        return redirect()->route('admin.kabupaten-kota.index')->with('success', 'Kabupaten/Kota berhasil dihapus.');
-    }
+
+public function destroy($id)
+{
+    $kabupaten = KabupatenKota::findOrFail($id);
+    $kabupaten->delete();
+
+    return redirect()->route('admin.kabupaten-kota.index')
+        ->with('success', 'Data berhasil dihapus.');
+}
 }

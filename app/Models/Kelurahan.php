@@ -19,12 +19,5 @@ class Kelurahan extends Model
     {
         return $this->belongsTo(Kecamatan::class);
     }
-
-    public function create()
-{
-    $kelurahans = Kelurahan::with('kecamatan.kabupatenKota.provinsi')->get();
-
-    return view('auth.register', compact('kelurahans'));
-}
 }
 

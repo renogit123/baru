@@ -18,7 +18,7 @@ class KecamatanController extends Controller
 
         Kecamatan::create($request->only('kabupaten_kota_id', 'nama', 'kode'));
 
-        return redirect()->route('admin.wilayah')->with('success', 'Kecamatan berhasil ditambahkan.');
+        return redirect()->route('admin.kecamatan.index')->with('success', 'Kecamatan berhasil ditambahkan.');
     }
 
     public function update(Request $request, Kecamatan $kecamatan)
@@ -31,14 +31,14 @@ class KecamatanController extends Controller
 
         $kecamatan->update($request->only('kabupaten_kota_id', 'nama', 'kode'));
 
-        return redirect()->route('admin.wilayah')->with('success', 'Kecamatan berhasil diperbarui.');
+        return redirect()->route('admin.kecamatan.index')->with('success', 'Kecamatan berhasil diperbarui.');
     }
 
     public function destroy(Kecamatan $kecamatan)
     {
         $kecamatan->delete();
 
-        return redirect()->route('admin.wilayah')->with('success', 'Kecamatan berhasil dihapus.');
+        return redirect()->route('admin.kecamatan.index')->with('success', 'Kecamatan berhasil dihapus.');
     }
 
     public function index(Request $request)
