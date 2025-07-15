@@ -218,6 +218,10 @@ Route::get('/admin/sertifikat/download/kelas/{id}', [DaftarTerimaSertifikatContr
 Route::get('/admin/jadwal/{id}/hadir', [JadwalPelatihanController::class, 'showHadir'])->name('admin.jadwal-pelatihan.showHadir');
 Route::get('admin/biodata/excel', [BiodataUserController::class, 'exportExcelBiodata'])->name('admin.biodata.excel');
 Route::get('admin/jadwal-pelatihan/{id}/hadir', [JadwalPelatihanController::class, 'showHadir'])->name('admin.jadwal-pelatihan.showHadir');
+Route::get('admin/export-kosong-per-jadwal/{id}', [BiodataExportController::class, 'exportKosongPerJadwal'])->name('admin.export.kosong-per-jadwal');
+Route::delete('/pelatihan/delete/{id}', [PelatihanController::class, 'destroy'])->name('admin.pelatihan.delete');
+Route::get('admin/export-excel/{id}', [BiodataExportController::class, 'exportExcelByJadwal'])->name('admin.export.excel');
+Route::get('/admin/export-excel/{id}', [BiodataExportController::class, 'exportExcelByJadwal'])->name('admin.export.excel');
 
 // Auth scaffolding
 require __DIR__ . '/auth.php';

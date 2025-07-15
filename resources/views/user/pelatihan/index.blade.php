@@ -41,6 +41,10 @@
                 <h4 class="text-lg font-bold text-white">{{ $jadwal->judul }}</h4>
                 <p class="text-white/80">🗓️ Tanggal: {{ $jadwal->tgl_mulai }} s/d {{ $jadwal->tgl_selesai }}</p>
                 <p class="text-white/60 text-sm">💰 Pembiayaan: {{ $jadwal->pembiayaan }} | 🏫 Kelas: {{ $jadwal->kelas }}</p>
+                
+                {{-- Tambahan Lokasi --}}
+                <p class="text-white/60 text-sm">📍 Kabupaten/Kota: {{ $jadwal->kabupatenkota->nama ?? '-' }}</p>
+                <p class="text-white/60 text-sm">🗺️ Provinsi: {{ $jadwal->provinsi->nama ?? '-' }}</p>
 
                 @if($register)
                     @if($register->status_peserta === 'pending')

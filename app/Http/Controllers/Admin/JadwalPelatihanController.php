@@ -29,8 +29,6 @@ class JadwalPelatihanController extends Controller
             'judul' => 'required|string|max:255',
             'tgl_mulai' => 'required|date',
             'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
             'pembiayaan' => 'required|in:RM,PNBP',
             'kelas' => 'required|string|max:100',
             'status' => 'required|boolean',
@@ -58,8 +56,6 @@ class JadwalPelatihanController extends Controller
             'judul' => 'required|string|max:255',
             'tgl_mulai' => 'required|date',
             'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
             'pembiayaan' => 'required|in:RM,PNBP',
             'kelas' => 'required|string|max:100',
             'status' => 'required|in:1,0',
@@ -81,27 +77,25 @@ class JadwalPelatihanController extends Controller
         return redirect()->route('admin.jadwal-pelatihan.index')->with('success', 'Jadwal berhasil dihapus');
     }
 
- public function show($id)
-{
-    $today = now()->toDateString();
-    return redirect()->route('admin.jadwal-pelatihan.showHadir', ['id' => $id, 'tanggal' => $today]);
-}
+    public function show($id)
+    {
+        $jadwal = JadwalPelatihan::with(['provinsi', 'kabupatenkota'])->findOrFail($id);
 
+        $pendaftars = \App\Models\RegisterPelatihan::with(['user.biodata'])
+            ->where('jadwal_pelatihan_id', $id)
+            ->get();
 
+        return view('admin.jadwal.show', compact('jadwal', 'pendaftars'));
+    }
 
- public function showHadir($id, Request $request)
-{
-    $tanggal = $request->input('tanggal', now()->toDateString());
+    public function showHadir($id)
+    {
+        $jadwal = JadwalPelatihan::with(['provinsi', 'kabupatenkota'])->findOrFail($id);
 
-    $jadwal = JadwalPelatihan::with(['provinsi', 'kabupatenkota'])->findOrFail($id);
+        $pendaftars = \App\Models\RegisterPelatihan::with(['user.biodata'])
+            ->where('jadwal_pelatihan_id', $id)
+            ->get();
 
-    // Ambil peserta berdasarkan jadwal & tanggal created_at (bukan absensi)
-    $pendaftars = \App\Models\RegisterPelatihan::with(['user.biodata'])
-        ->where('jadwal_pelatihan_id', $id)
-        ->whereDate('created_at', $tanggal)
-        ->get();
-
-    return view('admin.jadwal.show', compact('jadwal', 'pendaftars', 'tanggal'));
-}
-
+        return view('admin.jadwal.show', compact('jadwal', 'pendaftars'));
+    }
 }

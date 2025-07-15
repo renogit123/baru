@@ -45,13 +45,6 @@
             <x-text-input name="tgl_selesai" type="date" class="w-full mb-4 text-black"
                 value="{{ old('tgl_selesai', $pelatihan->tgl_selesai) }}" />
 
-            <x-text-input name="jam_mulai" type="time" class="w-full mb-4 text-black"
-                value="{{ old('jam_mulai', substr($pelatihan->jam_mulai, 0, 5)) }}" />
-
-            <x-text-input name="jam_selesai" type="time" class="w-full mb-4 text-black"
-                value="{{ old('jam_selesai', substr($pelatihan->jam_selesai, 0, 5)) }}" />
-
-
             <x-input-label for="pembiayaan" value="Pembiayaan" class="text-white/80" />
             <select name="pembiayaan" class="w-full mb-4 text-black rounded border-gray-300">
                 <option value="RM" {{ $pelatihan->pembiayaan == 'RM' ? 'selected' : '' }}>RM</option>
