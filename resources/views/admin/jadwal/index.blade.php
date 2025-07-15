@@ -20,7 +20,6 @@
                     <tr>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Judul</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Tanggal</th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">Jam</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Provinsi</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Kabupaten</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold">Pembiayaan</th>
@@ -34,11 +33,6 @@
                         <tr>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->judul }}</td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->tgl_mulai }} s/d {{ $jadwal->tgl_selesai }}</td>
-                            <td class="px-4 py-2 text-sm">
-                                {{ $jadwal->jam_mulai ? \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i') : '-' }}
-                                s/d
-                                {{ $jadwal->jam_selesai ? \Carbon\Carbon::parse($jadwal->jam_selesai)->format('H:i') : '-' }}
-                            </td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->provinsi->nama ?? '-' }}</td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->kabupatenkota->nama ?? '-' }}</td>
                             <td class="px-4 py-2 text-sm">{{ $jadwal->pembiayaan }}</td>

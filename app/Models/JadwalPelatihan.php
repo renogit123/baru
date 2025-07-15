@@ -16,8 +16,6 @@ protected $fillable = [
     'judul',
     'tgl_mulai',
     'tgl_selesai',
-    'jam_mulai',
-    'jam_selesai',
     'pembiayaan',
     'kelas',
     'status',

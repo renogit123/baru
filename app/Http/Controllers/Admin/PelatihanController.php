@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pelatihan;
+use App\Models\RegisterPelatihan;
 
 class PelatihanController extends Controller
 {
@@ -56,11 +57,17 @@ class PelatihanController extends Controller
         return redirect()->route('admin.pelatihan.index')->with('success', 'Pelatihan berhasil diperbarui!');
     }
 
-    public function destroy($id)
-    {
-        $pelatihan = Pelatihan::findOrFail($id);
-        $pelatihan->delete();
+public function destroy($id)
+{
+    $pendaftar = RegisterPelatihan::findOrFail($id);
 
-        return back()->with('success', 'Pelatihan berhasil dihapus!');
+    if ($pendaftar->status_peserta === 'approved') {
+        return redirect()->back()->with('error', 'Peserta yang sudah disetujui tidak dapat dihapus.');
     }
+
+    $pendaftar->delete();
+
+    return redirect()->back()->with('success', 'Peserta berhasil dihapus.');
+}
+
 }

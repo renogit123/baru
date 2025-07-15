@@ -19,36 +19,27 @@
             </p>
         </div>
 
-        {{-- Filter Tanggal --}}
-        <form method="GET" action="{{ route('admin.jadwal-pelatihan.showHadir', $jadwal->id) }}" class="mb-4">
-            <div class="flex items-center space-x-2">
-                <label for="tanggal" class="text-white text-sm">📅 Filter Tanggal:</label>
-                <input type="date" name="tanggal" id="tanggal"
-                       value="{{ request('tanggal', \Carbon\Carbon::today()->toDateString()) }}"
-                       class="text-sm px-3 py-1 rounded border border-white/20 bg-white/10 text-white placeholder:text-white/40">
-
-                <button type="submit"
-                        class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 text-sm">
-                    🔍 Tampilkan
-                </button>
-
-                <a href="{{ route('admin.jadwal-pelatihan.showHadir', ['id' => $jadwal->id, 'tanggal' => \Carbon\Carbon::today()->toDateString()]) }}"
-                   class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-500 text-sm">
-                    🔄 Reset
-                </a>
-            </div>
-        </form>
-
         {{-- Tombol Export --}}
         <div class="flex justify-between items-center mb-4">
             <div class="flex gap-2">
-                <a href="{{ route('admin.jadwal.export-nilai', ['id' => $jadwal->id, 'tanggal' => request('tanggal', \Carbon\Carbon::today()->toDateString())]) }}"
-                   class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded shadow">
-                   📥 Download PDF Daftar Hadir
+                {{-- Tombol Download PDF Daftar Hadir --}}
+                <a href="{{ route('admin.jadwal.export-nilai', $jadwal->id) }}"
+                    class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded shadow">
+                    📥 Download PDF Daftar Hadir
                 </a>
-                <a href="{{ route('admin.jadwal.export-excel', ['id' => $jadwal->id, 'tanggal' => request('tanggal', \Carbon\Carbon::today()->toDateString())]) }}"
-                   class="px-3 py-1 bg-green-600 hover:bg-green-500 text-white text-xs rounded shadow">
-                   📊 Download Excel Nilai Pre Test dan Post test
+
+                {{-- Tombol Download Excel Nilai --}}
+                <a href="{{ route('admin.jadwal.export-excel', $jadwal->id) }}"
+                class="px-3 py-1 bg-green-600 hover:bg-green-500 text-white text-xs rounded shadow"
+                target="_blank">
+                📊 Download Excel Nilai Pre Test dan Post test
+                </a>
+
+
+                {{-- Tombol Download Kosong --}}
+                <a href="{{ route('admin.export.kosong-per-jadwal', $jadwal->id) }}"
+                    class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white text-xs rounded shadow">
+                    📝 Download PDF Kosong (Tanpa Nilai)
                 </a>
             </div>
         </div>
@@ -91,7 +82,7 @@
                                 @elseif($pendaftar->status_peserta === 'rejected')
                                     <span class="text-red-400 font-semibold">❌ Ditolak</span>
                                 @else
-                                    <div class="flex gap-2">
+                                    <div class="flex gap-2 items-center">
                                         <form method="POST" action="{{ route('admin.pelatihan.acc', $pendaftar->id) }}">
                                             @csrf
                                             @method('PUT')
@@ -104,6 +95,13 @@
                                             @method('PUT')
                                             <button class="text-red-300 hover:underline" onclick="this.disabled=true; this.innerText='Menolak...'; this.form.submit();">
                                                 ❌ Tolak
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('admin.pelatihan.delete', $pendaftar->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="text-white hover:underline" onclick="return confirm('Yakin ingin menghapus peserta ini?')">
+                                                🗑️ Hapus
                                             </button>
                                         </form>
                                     </div>
