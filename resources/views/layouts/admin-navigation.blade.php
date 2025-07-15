@@ -1,4 +1,4 @@
-<div x-data="{ openSidebar: false }" class="flex">
+<div x-data="sidebarHandler()" class="flex">
 
     <!-- Tombol toggle untuk mobile -->
     <button @click="openSidebar = !openSidebar"
@@ -8,10 +8,9 @@
 
     <!-- Sidebar -->
     <nav
-        :class="{ '-translate-x-full': !openSidebar && window.innerWidth < 640 }"
+        :class="{ '-translate-x-full': !openSidebar }"
         class="fixed sm:static inset-y-0 left-0 z-40 sm:z-0 w-64 bg-gray-900 text-gray-100 shadow-xl flex flex-col justify-between font-medium transform transition-transform duration-300 sm:translate-x-0"
-        x-init="if(window.innerWidth >= 640) openSidebar = true"
-        @resize.window="openSidebar = window.innerWidth >= 640">
+    >
 
         <!-- Atas: Logo dan Info Admin -->
         <div class="px-6 py-5 space-y-4">
@@ -44,7 +43,7 @@
                 <li x-data="{ open: false }">
                     <button @click="open = !open" class="w-full flex justify-between items-center px-3 py-2 rounded hover:bg-gray-700">
                         🗺️ Wilayah
-                        <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none" stroke="currentColor">
+                        <svg :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
@@ -56,17 +55,18 @@
                     </ul>
                 </li>
 
+                <!-- Biodata -->
                 <li>
                     <a href="{{ route('admin.user.biodata.index') }}" class="block px-3 py-2 hover:bg-gray-700 rounded">
                         🧑‍💼 Biodata
                     </a>
                 </li>
 
-                <!-- Pelatihan -->
+                <!-- Dropdown Pelatihan -->
                 <li x-data="{ open: false }">
                     <button @click="open = !open" class="w-full flex justify-between items-center px-3 py-2 rounded hover:bg-gray-700">
                         📝 Pelatihan
-                        <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none" stroke="currentColor">
+                        <svg :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
@@ -80,7 +80,7 @@
             </ul>
         </div>
 
-        <!-- Bawah: Profil dan Logout -->
+        <!-- Footer: Profil dan Logout -->
         <div class="px-6 py-4 border-t border-gray-800 bg-gray-800/50">
             <div class="text-xs text-gray-400 mb-1">👤 {{ Auth::user()->name }}</div>
             <a href="{{ route('profile.edit') }}" class="block px-3 py-1 hover:bg-gray-700 rounded">⚙️ Profil</a>
@@ -91,11 +91,26 @@
         </div>
     </nav>
 
-    <!-- Backdrop untuk mobile -->
+    <!-- Backdrop Mobile -->
     <div
-        x-show="openSidebar && window.innerWidth < 640"
+        x-show="openSidebar && isMobile"
         @click="openSidebar = false"
         class="fixed inset-0 bg-black bg-opacity-50 z-30 sm:hidden"
         x-transition.opacity>
     </div>
 </div>
+
+<script>
+    function sidebarHandler() {
+        return {
+            openSidebar: window.innerWidth >= 640,
+            isMobile: window.innerWidth < 640,
+            init() {
+                window.addEventListener('resize', () => {
+                    this.isMobile = window.innerWidth < 640;
+                    if (!this.isMobile) this.openSidebar = true;
+                });
+            }
+        }
+    }
+</script>

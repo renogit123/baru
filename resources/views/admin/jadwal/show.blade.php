@@ -39,7 +39,7 @@
                 {{-- Tombol Download Kosong --}}
                 <a href="{{ route('admin.export.kosong-per-jadwal', $jadwal->id) }}"
                     class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white text-xs rounded shadow">
-                    📝 Download PDF Kosong (Tanpa Nilai)
+                    📝 Download PDF Tool Kit
                 </a>
             </div>
         </div>
