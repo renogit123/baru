@@ -30,7 +30,6 @@ class DatabaseSeeder extends Seeder
             kabupaten_kotaSeeder::class,
             KecamatanSeeder::class,
             KelurahanSeeder::class,
-            CobaUserSeeder::class,
             // Tambahkan seeder lain di sini jika ada
         ]);
     }

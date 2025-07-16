@@ -174,62 +174,6 @@
     </div>
 </section>
 
-
-    <!-- Galeri Slider -->
-   <section class="relative w-full min-h-screen bg-black bg-transparent px-6 py-10" id="videoSlider">
-
-    <!-- Judul -->
-    <div class="relative z-20 mb-8">
-        <h2 class="text-2xl font-semibold text-center text-yellow-400 drop-shadow">
-            🎞️View Kota Malang
-        </h2>
-    </div>
-
-    <!-- Video Slider -->
-    <div class="relative z-20 overflow-hidden rounded-2xl shadow-2xl border border-white/10" class="absolute inset-0 z-10 cursor-pointer" onclick="nextVideo()">
-        <div class="w-full transition-transform duration-700 ease-in-out flex" id="videoTrack">
-            <!-- Slide 1 -->
-            <div class="w-full flex-shrink-0">
-                <video src="{{ asset('video/malang.mp4') }}" autoplay muted loop class="w-full h-[60vh] object-cover rounded-2xl"></video>
-            </div>
-
-            <!-- Slide 2 -->
-            <div class="w-full flex-shrink-0">
-                <video src="{{ asset('video/video2.mp4') }}" autoplay muted loop class="w-full h-[60vh] object-cover rounded-2xl"></video>
-            </div>
-        </div>
-    </div>
-
-    <!-- Indicator -->
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex space-x-3">
-        <div class="w-3 h-3 rounded-full bg-white/60" id="dot0"></div>
-        <div class="w-3 h-3 rounded-full bg-white/30" id="dot1"></div>
-    </div>
-</section>
-
-
-<script>
-    let currentVideo = 0;
-    const videoTrack = document.getElementById('videoTrack');
-    const dots = [document.getElementById('dot0'), document.getElementById('dot1')];
-
-    function showVideo(index) {
-        videoTrack.style.transform = `translateX(-${index * 100}%)`;
-        dots.forEach((dot, i) => {
-            dot.classList.toggle('bg-white/60', i === index);
-            dot.classList.toggle('bg-white/30', i !== index);
-        });
-    }
-
-    function nextVideo() {
-        currentVideo = (currentVideo + 1) % 2;
-        showVideo(currentVideo);
-    }
-    
-</script>
-
-
-
     <!-- FAQ -->
     <section class="relative z-10 py-16 px-6 max-w-5xl mx-auto fade-in">
         <h2 class="text-2xl font-semibold text-center text-yellow-400 mb-10">Pertanyaan Umum</h2>
