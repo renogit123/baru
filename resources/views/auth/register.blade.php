@@ -44,99 +44,99 @@
             <p class="text-sm text-white/90">Silakan isi formulir untuk membuat akun Anda</p>
         </div>
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
+        <form id="registerForm" method="POST" action="{{ route('register') }}" novalidate>
 
-            {{-- Form Akun --}}
-            <x-input-label for="name" value="Nama Lengkap" class="text-white" />
-            <x-text-input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus
-                class="w-full mb-4 bg-white/90 text-gray-900" />
+    @csrf
 
-            <x-input-label for="email" value="Email" class="text-white" />
-            <x-text-input id="email" name="email" type="email" value="{{ old('email') }}" required
-                class="w-full mb-4 bg-white/90 text-gray-900" />
+    {{-- Nama --}}
+    <x-input-label for="name" value="Nama Lengkap" class="text-white" />
+    <x-text-input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus
+        class="w-full mb-1 bg-white/90 text-gray-900" />
+    @error('name') <p class="text-sm text-red-400 mb-3">{{ $message }}</p> @enderror
 
-            <x-input-label for="password" value="Kata Sandi" class="text-white" />
-            <x-text-input id="password" name="password" type="password" required
-                class="w-full mb-4 bg-white/90 text-gray-900" />
+    {{-- Email --}}
+    <x-input-label for="email" value="Email" class="text-white" />
+    <x-text-input id="email" name="email" type="email" value="{{ old('email') }}" required
+        class="w-full mb-1 bg-white/90 text-gray-900" />
+    @error('email') <p class="text-sm text-red-400 mb-3">{{ $message }}</p> @enderror
 
-            <x-input-label for="password_confirmation" value="Konfirmasi Kata Sandi" class="text-white" />
-            <x-text-input id="password_confirmation" name="password_confirmation" type="password" required
-                class="w-full mb-4 bg-white/90 text-gray-900" />
+    {{-- Kata Sandi --}}
+    <x-input-label for="password" value="Kata Sandi" class="text-white" />
+    <x-text-input id="password" name="password" type="password" required
+        class="w-full mb-1 bg-white/90 text-gray-900" />
+    @error('password') <p class="text-sm text-red-400 mb-3">{{ $message }}</p> @enderror
 
-            {{-- Form Biodata --}}
-            <x-input-label for="nama" value="Nama Peserta" class="text-white" />
-            <x-text-input name="nama" id="nama" class="block w-full mb-4 bg-sky-900 text-white" value="{{ old('nama') }}" />
+    {{-- Konfirmasi Sandi --}}
+    <x-input-label for="password_confirmation" value="Konfirmasi Kata Sandi" class="text-white" />
+    <x-text-input id="password_confirmation" name="password_confirmation" type="password" required
+        class="w-full mb-4 bg-white/90 text-gray-900" />
 
-            <x-input-label for="alamat" value="Alamat" class="text-white" />
-            <textarea name="alamat" id="alamat" class="block w-full mb-4 bg-sky-900 text-white rounded">{{ old('alamat') }}</textarea>
+    {{-- Biodata --}}
+    <x-input-label for="nama" value="Nama Peserta" class="text-white" />
+    <x-text-input id="nama" name="nama" type="text" value="{{ old('nama') }}" class="w-full mb-1 bg-sky-900 text-white" />
+    @error('nama') <p class="text-sm text-red-400 mb-3">{{ $message }}</p> @enderror
 
-            {{-- Desa/Kelurahan Search --}}
-            <div class="relative">
-                <label for="id_desa" class="block font-semibold text-white">Desa/Kelurahan</label>
-                <input type="text" id="desa_search" placeholder="Ketik nama desa..."
-                    class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white placeholder-white/50"
-                    autocomplete="off">
-                <input type="hidden" name="id_desa" id="id_desa" value="{{ old('id_desa') }}">
+    <x-input-label for="alamat" value="Alamat" class="text-white" />
+    <textarea id="alamat" name="alamat" class="w-full mb-1 bg-sky-900 text-white rounded">{{ old('alamat') }}</textarea>
+    @error('alamat') <p class="text-sm text-red-400 mb-3">{{ $message }}</p> @enderror
 
-                <ul id="desa_results"
-                    class="absolute z-10 mt-1 w-full bg-sky-800 border border-yellow-400/30 rounded-lg text-white max-h-52 overflow-y-auto hidden">
-                </ul>
-            </div>
+    {{-- Desa/Kelurahan (Autocomplete + Hidden ID) --}}
+    <input type="hidden" name="id_desa" id="id_desa" value="{{ old('id_desa') }}">
+    @error('id_desa') <p class="text-sm text-red-400 mb-3">{{ $message }}</p> @enderror
 
-            {{-- Wilayah Otomatis --}}
-            @foreach (['provinsi', 'kabupaten', 'kecamatan', 'desa', 'kode_desa'] as $field)
-                <div>
-                    <label class="block font-semibold text-white mt-2">{{ ucwords(str_replace('_', ' ', $field)) }}</label>
-                    <input type="text" id="{{ $field }}" name="{{ $field }}" readonly
-                        class="bg-sky-800 border border-yellow-400/20 rounded-lg w-full text-white">
-                </div>
+    {{-- Wilayah Otomatis --}}
+    @foreach (['provinsi', 'kabupaten', 'kecamatan', 'desa', 'kode_desa'] as $field)
+        <x-input-label for="{{ $field }}" value="{{ ucwords(str_replace('_', ' ', $field)) }}" class="text-white mt-2" />
+        <x-text-input id="{{ $field }}" name="{{ $field }}" readonly
+            class="w-full mb-1 bg-sky-800 border border-yellow-400/20 text-white" value="{{ old($field) }}" />
+    @endforeach
+
+    {{-- Input Lainnya --}}
+    @php
+        $fields = [
+            'nik' => 'NIK', 'npwp' => 'NPWP (opsional)', 'tempat_lahir' => 'Tempat Lahir',
+            'tanggal_lahir' => 'Tanggal Lahir', 'jabatan' => 'Jabatan',
+            'lama_menjabat' => 'Lama Menjabat (tahun)', 'nomor_sk_jabatan' => 'Nomor SK Jabatan',
+            'no_telp' => 'No Telepon'
+        ];
+    @endphp
+    @foreach($fields as $key => $label)
+        <x-input-label for="{{ $key }}" value="{{ $label }}" class="text-white mt-2" />
+        <x-text-input id="{{ $key }}" name="{{ $key }}" type="{{ $key === 'tanggal_lahir' ? 'date' : ($key === 'lama_menjabat' ? 'number' : 'text') }}"
+            class="w-full mb-1 bg-sky-900 text-white" value="{{ old($key) }}" />
+        @error($key) <p class="text-sm text-red-400 mb-3">{{ $message }}</p> @enderror
+    @endforeach
+
+    {{-- Dropdown --}}
+    @php
+        $dropdowns = [
+            'jenis_kelamin' => ['Laki-laki', 'Perempuan'],
+            'agama' => ['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu','Lainnya'],
+            'status_kawin' => ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati'],
+            'pendidikan' => ['SD','SMP','SMA','Diploma','Sarjana','Magister','Doktor','Lainnya']
+        ];
+    @endphp
+    @foreach ($dropdowns as $name => $options)
+        <x-input-label for="{{ $name }}" value="{{ ucwords(str_replace('_', ' ', $name)) }}" class="text-white mt-2" />
+        <select id="{{ $name }}" name="{{ $name }}"
+            class="w-full mb-1 bg-sky-900 text-white border border-yellow-400/30 rounded-lg">
+            <option value="">-- Pilih --</option>
+            @foreach ($options as $opt)
+                <option value="{{ $opt }}" {{ old($name) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
             @endforeach
+        </select>
+        @error($name) <p class="text-sm text-red-400 mb-3">{{ $message }}</p> @enderror
+    @endforeach
 
-            {{-- Input Lainnya --}}
-            @php
-                $fields = [
-                    'nik' => 'NIK', 'npwp' => 'NPWP (opsional)', 'tempat_lahir' => 'Tempat Lahir',
-                    'tanggal_lahir' => 'Tanggal Lahir', 'jabatan' => 'Jabatan',
-                    'lama_menjabat' => 'Lama Menjabat (tahun)', 'nomor_sk_jabatan' => 'Nomor SK Jabatan',
-                    'no_telp' => 'No Telepon'
-                ];
-            @endphp
+    {{-- Submit --}}
+    <button type="submit" class="w-full py-2 mt-4 bg-yellow-400 text-blue-900 font-semibold rounded-full hover:bg-yellow-300 transition">Daftar</button>
 
-            @foreach($fields as $key => $label)
-                <x-input-label for="{{ $key }}" value="{{ $label }}" class="text-white mt-2" />
-                <x-text-input id="{{ $key }}" name="{{ $key }}" type="{{ $key === 'tanggal_lahir' ? 'date' : ($key === 'lama_menjabat' ? 'number' : 'text') }}"
-                    class="w-full mb-4 bg-sky-900 text-white"
-                    value="{{ old($key) }}" />
-            @endforeach
+    <p class="text-sm text-center text-white mt-4">
+        Sudah punya akun? <a href="{{ route('login') }}" class="text-yellow-300 hover:underline">Masuk di sini</a>
+    </p>
+</form>
 
-            {{-- Dropdowns --}}
-            @php
-                $dropdowns = [
-                    'jenis_kelamin' => ['Laki-laki', 'Perempuan'],
-                    'agama' => ['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu','Lainnya'],
-                    'status_kawin' => ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati'],
-                    'pendidikan' => ['SD','SMP','SMA','Diploma','Sarjana','Magister','Doktor','Lainnya']
-                ];
-            @endphp
 
-            @foreach ($dropdowns as $name => $options)
-                <x-input-label for="{{ $name }}" value="{{ ucwords(str_replace('_', ' ', $name)) }}" class="text-white mt-2" />
-                <select id="{{ $name }}" name="{{ $name }}"
-                    class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white mb-4">
-                    <option value="">-- Pilih --</option>
-                    @foreach ($options as $opt)
-                        <option value="{{ $opt }}" {{ old($name) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
-                    @endforeach
-                </select>
-            @endforeach
-
-            <button type="submit" class="w-full py-2 bg-yellow-400 text-blue-900 font-semibold rounded-full hover:bg-yellow-300 transition">Daftar</button>
-
-            <p class="text-sm text-center text-white mt-4">
-                Sudah punya akun? <a href="{{ route('login') }}" class="text-yellow-300 hover:underline">Masuk di sini</a>
-            </p>
-        </form>
     </div>
 
     <script>
@@ -207,5 +207,40 @@
             }
         });
     </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Validasi Bahasa Indonesia
+        const form = document.getElementById('registerForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                let valid = true;
+
+                // Validasi input kosong
+                form.querySelectorAll('input[required], textarea[required], select[required]').forEach(input => {
+                    input.setCustomValidity('');
+                    if (!input.value) {
+                        input.setCustomValidity('Harap isi bidang ini.');
+                        input.reportValidity();
+                        valid = false;
+                    }
+                });
+
+                // Validasi konfirmasi password
+                const password = document.getElementById('password');
+                const confirm = document.getElementById('password_confirmation');
+                if (password && confirm && password.value !== confirm.value) {
+                    confirm.setCustomValidity('Konfirmasi kata sandi tidak cocok.');
+                    confirm.reportValidity();
+                    valid = false;
+                }
+
+                if (!valid) e.preventDefault();
+            });
+        }
+    });
+</script>
+
+
 </body>
 </html>
