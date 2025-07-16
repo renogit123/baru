@@ -13,54 +13,33 @@
 
             {{-- Alamat --}}
             <x-input-label for="alamat" value="Alamat" class="text-white" />
-            <textarea name="alamat" id="alamat" class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">{{ old('alamat', $biodata->alamat ?? '') }}</textarea>
+            <textarea name="alamat" id="alamat"
+                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">{{ old('alamat', $biodata->alamat ?? '') }}</textarea>
 
-            {{-- ID Desa --}}
-            <x-input-label for="id_desa" value="Desa/Kelurahan (pilih dari daftar)" class="text-white" />
-            <input list="daftar-desa" name="id_desa" id="id_desa"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded"
-                value="{{ old('id_desa', $biodata->id_desa ?? '') }}">
-            <datalist id="daftar-desa">
-                @foreach($kelurahans as $desa)
-                    <option value="{{ $desa->id }}">
-                        {{ $desa->nama }},
-                        {{ $desa->kecamatan->nama ?? '' }},
-                        {{ $desa->kecamatan->kabupatenKota->nama ?? '' }},
-                        {{ $desa->kecamatan->kabupatenKota->provinsi->nama ?? '' }}
-                    </option>
-                @endforeach
-            </datalist>
+            {{-- Desa/Kelurahan Search --}}
+            <div class="relative">
+                <x-input-label for="id_desa" value="Desa/Kelurahan (cari berdasarkan nama)" class="text-white" />
+                <input type="text" id="desa_search" placeholder="Ketik nama desa..."
+                    class="bg-sky-900 border border-white/30 rounded-lg w-full text-white placeholder-white/50 mb-2"
+                    autocomplete="off">
+                <input type="hidden" name="id_desa" id="id_desa" value="{{ old('id_desa', $biodata->id_desa ?? '') }}">
+
+                <ul id="desa_results"
+                    class="absolute z-10 mt-1 w-full bg-sky-800 border border-white/20 rounded-lg text-white max-h-52 overflow-y-auto hidden">
+                </ul>
+            </div>
 
             {{-- Wilayah Otomatis --}}
-            <x-input-label value="Provinsi" class="text-white" />
-            <input type="text" id="provinsi" name="provinsi" readonly
-                class="block w-full mb-2 bg-sky-800 border border-white/20 text-white rounded"
-                value="{{ old('provinsi', $biodata->provinsi ?? '') }}">
-
-            <x-input-label value="Kabupaten/Kota" class="text-white" />
-            <input type="text" id="kabupaten" name="kabupaten" readonly
-                class="block w-full mb-2 bg-sky-800 border border-white/20 text-white rounded"
-                value="{{ old('kabupaten', $biodata->kabupaten ?? '') }}">
-
-            <x-input-label value="Kecamatan" class="text-white" />
-            <input type="text" id="kecamatan" name="kecamatan" readonly
-                class="block w-full mb-2 bg-sky-800 border border-white/20 text-white rounded"
-                value="{{ old('kecamatan', $biodata->kecamatan ?? '') }}">
-
-            <x-input-label value="Kelurahan/Desa" class="text-white" />
-            <input type="text" id="desa" name="kelurahan" readonly
-                class="block w-full mb-2 bg-sky-800 border border-white/20 text-white rounded"
-                value="{{ old('kelurahan', $biodata->kelurahan ?? '') }}">
-
-            <x-input-label value="Kode Desa" class="text-white" />
-            <input type="text" id="kode_desa" name="kode_desa" readonly
-                class="block w-full mb-4 bg-sky-800 border border-white/20 text-white rounded"
-                value="{{ old('kode_desa', $biodata->kode_desa ?? '') }}">
+            @foreach (['provinsi', 'kabupaten', 'kecamatan', 'desa', 'kode_desa'] as $field)
+                <x-input-label for="{{ $field }}" value="{{ ucwords(str_replace('_', ' ', $field)) }}" class="text-white mt-2" />
+                <input type="text" id="{{ $field }}" name="{{ $field }}" readonly
+                    class="block w-full bg-sky-800 border border-white/20 text-white rounded mb-2"
+                    value="{{ old($field, $biodata->$field ?? '') }}">
+            @endforeach
 
             {{-- NIK --}}
             <x-input-label for="nik" value="NIK" class="text-white" />
-            <x-text-input name="nik" id="nik"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
+            <x-text-input name="nik" id="nik" class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('nik', $biodata->nik ?? '') }}" />
 
             {{-- Tempat Lahir --}}
@@ -77,16 +56,14 @@
 
             {{-- Jenis Kelamin --}}
             <x-input-label for="jenis_kelamin" value="Jenis Kelamin" class="text-white" />
-            <select name="jenis_kelamin"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">
+            <select name="jenis_kelamin" class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">
                 <option value="Laki-laki" {{ old('jenis_kelamin', $biodata->jenis_kelamin ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
                 <option value="Perempuan" {{ old('jenis_kelamin', $biodata->jenis_kelamin ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
             </select>
 
             {{-- Status Kawin --}}
             <x-input-label for="status_kawin" value="Status Kawin" class="text-white" />
-            <select name="status_kawin"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">
+            <select name="status_kawin" class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">
                 @foreach(['Kawin', 'Belum Kawin', 'Cerai Hidup', 'Cerai Mati'] as $status)
                     <option value="{{ $status }}" {{ old('status_kawin', $biodata->status_kawin ?? '') == $status ? 'selected' : '' }}>{{ $status }}</option>
                 @endforeach
@@ -126,6 +103,7 @@
                 class="block w-full mb-6 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('no_telp', $biodata->no_telp ?? '') }}" />
 
+            {{-- Tombol --}}
             <x-primary-button class="bg-green-700 text-white font-bold px-6 py-2 rounded shadow">
                 💾 Simpan Perubahan
             </x-primary-button>
@@ -136,25 +114,55 @@
     {{-- SCRIPT --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const desaSearch = document.getElementById('desa_search');
+            const desaResults = document.getElementById('desa_results');
             const idDesaInput = document.getElementById('id_desa');
 
-            idDesaInput.addEventListener('change', () => {
-                const id = idDesaInput.value;
-                if (!id) return;
+            desaSearch.addEventListener('input', function () {
+                const query = this.value;
+                if (query.length < 3) {
+                    desaResults.innerHTML = '';
+                    desaResults.classList.add('hidden');
+                    return;
+                }
 
-                fetch(`/api/desa/${id}`)
+                fetch(`/api/search-desa?q=${encodeURIComponent(query)}`)
                     .then(res => res.json())
                     .then(data => {
-                        document.getElementById('provinsi').value = data.provinsi ?? '';
-                        document.getElementById('kabupaten').value = data.kabupaten ?? '';
-                        document.getElementById('kecamatan').value = data.kecamatan ?? '';
-                        document.getElementById('desa').value = data.desa ?? '';
-                        document.getElementById('kode_desa').value = data.kode_desa ?? '';
-                    })
-                    .catch(err => {
-                        alert('Gagal mengambil data wilayah.');
-                        console.error(err);
+                        desaResults.innerHTML = '';
+                        if (data.length === 0) {
+                            desaResults.classList.add('hidden');
+                            return;
+                        }
+
+                        data.forEach(item => {
+                            const li = document.createElement('li');
+                            li.textContent = `${item.nama} - ${item.kecamatan} - ${item.kabupaten} - ${item.provinsi}`;
+                            li.classList.add('cursor-pointer', 'px-4', 'py-2', 'hover:bg-sky-700');
+                            li.addEventListener('click', () => {
+                                desaSearch.value = li.textContent;
+                                idDesaInput.value = item.id;
+                                desaResults.classList.add('hidden');
+
+                                fetch(`/api/desa/${item.id}`)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        ['provinsi','kabupaten','kecamatan','desa','kode_desa'].forEach(field => {
+                                            document.getElementById(field).value = data[field] ?? '';
+                                        });
+                                    });
+                            });
+                            desaResults.appendChild(li);
+                        });
+
+                        desaResults.classList.remove('hidden');
                     });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!desaSearch.contains(e.target) && !desaResults.contains(e.target)) {
+                    desaResults.classList.add('hidden');
+                }
             });
 
             const oldIdDesa = '{{ old('id_desa', $biodata->id_desa ?? '') }}';
@@ -162,11 +170,12 @@
                 fetch(`/api/desa/${oldIdDesa}`)
                     .then(res => res.json())
                     .then(data => {
-                        document.getElementById('provinsi').value = data.provinsi ?? '';
-                        document.getElementById('kabupaten').value = data.kabupaten ?? '';
-                        document.getElementById('kecamatan').value = data.kecamatan ?? '';
-                        document.getElementById('desa').value = data.desa ?? '';
-                        document.getElementById('kode_desa').value = data.kode_desa ?? '';
+                        ['provinsi','kabupaten','kecamatan','desa','kode_desa'].forEach(field => {
+                            document.getElementById(field).value = data[field] ?? '';
+                        });
+
+                        document.getElementById('desa_search').value =
+                            `${data.desa} - ${data.kecamatan} - ${data.kabupaten} - ${data.provinsi}`;
                     });
             }
         });

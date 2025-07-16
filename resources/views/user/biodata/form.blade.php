@@ -21,7 +21,8 @@
             {{-- Nama --}}
             <div>
                 <label for="nama" class="block font-semibold text-yellow-200">Nama Peserta</label>
-                <x-text-input id="nama" name="nama" type="text" class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white"
+                <x-text-input id="nama" name="nama" type="text"
+                    class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white"
                     value="{{ old('nama', $biodata->nama ?? '') }}" />
             </div>
 
@@ -32,25 +33,17 @@
                     class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white">{{ old('alamat', $biodata->alamat ?? '') }}</textarea>
             </div>
 
-            {{-- ID Desa --}}
-            <div>
+            {{-- Desa/Kelurahan Search --}}
+            <div class="relative">
                 <label for="id_desa" class="block font-semibold text-yellow-200">Desa/Kelurahan</label>
-                <input list="daftar-desa" id="id_desa" name="id_desa"
+                <input type="text" id="desa_search" placeholder="Ketik nama desa..."
                     class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white placeholder-white/50"
-                    placeholder="contoh: desa/kel kec kab/kota prov"
-                    value="{{ old('id_desa', $biodata->id_desa ?? '') }}" required>
-                <datalist id="daftar-desa">
-                    @foreach($kelurahans as $desa)
-                        <option value="{{ $desa->id }}">
-                            {{ $desa->nama }}
-                            @if($desa->kecamatan && $desa->kecamatan->kabupatenKota && $desa->kecamatan->kabupatenKota->provinsi)
-                                - {{ $desa->kecamatan->nama }}
-                                - {{ $desa->kecamatan->kabupatenKota->nama }}
-                                - {{ $desa->kecamatan->kabupatenKota->provinsi->nama }}
-                            @endif
-                        </option>
-                    @endforeach
-                </datalist>
+                    autocomplete="off">
+                <input type="hidden" name="id_desa" id="id_desa" value="{{ old('id_desa', $biodata->id_desa ?? '') }}">
+
+                <ul id="desa_results"
+                    class="absolute z-10 mt-1 w-full bg-sky-800 border border-yellow-400/30 rounded-lg text-white max-h-52 overflow-y-auto hidden">
+                </ul>
             </div>
 
             {{-- Wilayah Otomatis --}}
@@ -62,7 +55,7 @@
                 </div>
             @endforeach
 
-            {{-- Field Input Lainnya --}}
+            {{-- Input Lainnya --}}
             @php
                 $fields = [
                     'nik' => 'NIK', 'npwp' => 'NPWP (opsional)', 'tempat_lahir' => 'Tempat Lahir',
@@ -104,7 +97,7 @@
                 </div>
             @endforeach
 
-            {{-- Submit Button --}}
+            {{-- Tombol Simpan --}}
             <div class="pt-6 text-center">
                 <x-primary-button class="bg-yellow-400 hover:bg-yellow-300 text-sky-900 font-bold px-8 py-3 rounded-xl shadow-lg transition hover:-translate-y-1">
                     💾 Simpan Biodata
@@ -113,25 +106,58 @@
         </form>
     </div>
 
-    {{-- Script tetap sama --}}
+    {{-- Script --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const desaSearch = document.getElementById('desa_search');
+            const desaResults = document.getElementById('desa_results');
             const idDesaInput = document.getElementById('id_desa');
-            idDesaInput.addEventListener('change', () => {
-                const id = idDesaInput.value;
-                if (!id) return;
 
-                fetch(`/api/desa/${id}`)
+            desaSearch.addEventListener('input', function () {
+                const query = this.value;
+                if (query.length < 3) {
+                    desaResults.innerHTML = '';
+                    desaResults.classList.add('hidden');
+                    return;
+                }
+
+                fetch(`/api/search-desa?q=${encodeURIComponent(query)}`)
                     .then(res => res.json())
                     .then(data => {
-                        ['provinsi','kabupaten','kecamatan','desa','kode_desa'].forEach(field => {
-                            document.getElementById(field).value = data[field] ?? '';
+                        desaResults.innerHTML = '';
+                        if (data.length === 0) {
+                            desaResults.classList.add('hidden');
+                            return;
+                        }
+
+                        data.forEach(item => {
+                            const li = document.createElement('li');
+                            li.textContent = `${item.nama} - ${item.kecamatan} - ${item.kabupaten} - ${item.provinsi}`;
+                            li.classList.add('cursor-pointer', 'px-4', 'py-2', 'hover:bg-sky-700');
+                            li.addEventListener('click', () => {
+                                desaSearch.value = li.textContent;
+                                idDesaInput.value = item.id;
+                                desaResults.classList.add('hidden');
+
+                                fetch(`/api/desa/${item.id}`)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        ['provinsi','kabupaten','kecamatan','desa','kode_desa'].forEach(field => {
+                                            document.getElementById(field).value = data[field] ?? '';
+                                        });
+                                    });
+                            });
+                            desaResults.appendChild(li);
                         });
-                    })
-                    .catch(err => {
-                        console.error('Gagal ambil data wilayah:', err);
-                        alert('Gagal mengambil data wilayah.');
+
+                        desaResults.classList.remove('hidden');
                     });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!desaSearch.contains(e.target) && !desaResults.contains(e.target)) {
+                    desaResults.classList.add('hidden');
+                }
             });
 
             const oldIdDesa = '{{ old('id_desa', $biodata->id_desa ?? '') }}';
@@ -142,9 +168,10 @@
                         ['provinsi','kabupaten','kecamatan','desa','kode_desa'].forEach(field => {
                             document.getElementById(field).value = data[field] ?? '';
                         });
-                    })
-                    .catch(err => {
-                        console.error('Gagal ambil data wilayah saat load:', err);
+
+                        // tampilkan kembali di input search
+                        document.getElementById('desa_search').value =
+                            `${data.desa} - ${data.kecamatan} - ${data.kabupaten} - ${data.provinsi}`;
                     });
             }
         });

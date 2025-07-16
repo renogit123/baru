@@ -224,6 +224,7 @@ Route::get('admin/export-kosong-per-jadwal/{id}', [BiodataExportController::clas
 Route::delete('/pelatihan/delete/{id}', [PelatihanController::class, 'destroy'])->name('admin.pelatihan.delete');
 Route::get('admin/export-excel/{id}', [BiodataExportController::class, 'exportExcelByJadwal'])->name('admin.export.excel');
 Route::get('/admin/export-excel/{id}', [BiodataExportController::class, 'exportExcelByJadwal'])->name('admin.export.excel');
+Route::get('/api/search-desa', [WilayahController::class, 'searchDesa']);
 
 // Auth scaffolding
 require __DIR__ . '/auth.php';

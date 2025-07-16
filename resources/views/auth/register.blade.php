@@ -47,33 +47,22 @@
         <form method="POST" action="{{ route('register') }}">
             @csrf
 
-            {{-- Akun --}}
-            <div class="mb-4">
-                <label for="name" class="block text-sm font-medium text-white">Nama Lengkap</label>
-                <input type="text" id="name" name="name" value="{{ old('name') }}" required autofocus
-                    class="w-full mt-1 px-4 py-2 rounded-lg bg-white/90 text-gray-900 focus:ring-2 focus:ring-yellow-400">
-                @error('name') <span class="text-red-200 text-xs">{{ $message }}</span> @enderror
-            </div>
+            {{-- Form Akun --}}
+            <x-input-label for="name" value="Nama Lengkap" class="text-white" />
+            <x-text-input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus
+                class="w-full mb-4 bg-white/90 text-gray-900" />
 
-            <div class="mb-4">
-                <label for="email" class="block text-sm font-medium text-white">Email</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required
-                    class="w-full mt-1 px-4 py-2 rounded-lg bg-white/90 text-gray-900 focus:ring-2 focus:ring-yellow-400">
-                @error('email') <span class="text-red-200 text-xs">{{ $message }}</span> @enderror
-            </div>
+            <x-input-label for="email" value="Email" class="text-white" />
+            <x-text-input id="email" name="email" type="email" value="{{ old('email') }}" required
+                class="w-full mb-4 bg-white/90 text-gray-900" />
 
-            <div class="mb-4">
-                <label for="password" class="block text-sm font-medium text-white">Kata Sandi</label>
-                <input type="password" id="password" name="password" required
-                    class="w-full mt-1 px-4 py-2 rounded-lg bg-white/90 text-gray-900 focus:ring-2 focus:ring-yellow-400">
-                @error('password') <span class="text-red-200 text-xs">{{ $message }}</span> @enderror
-            </div>
+            <x-input-label for="password" value="Kata Sandi" class="text-white" />
+            <x-text-input id="password" name="password" type="password" required
+                class="w-full mb-4 bg-white/90 text-gray-900" />
 
-            <div class="mb-6">
-                <label for="password_confirmation" class="block text-sm font-medium text-white">Konfirmasi Kata Sandi</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" required
-                    class="w-full mt-1 px-4 py-2 rounded-lg bg-white/90 text-gray-900 focus:ring-2 focus:ring-yellow-400">
-            </div>
+            <x-input-label for="password_confirmation" value="Konfirmasi Kata Sandi" class="text-white" />
+            <x-text-input id="password_confirmation" name="password_confirmation" type="password" required
+                class="w-full mb-4 bg-white/90 text-gray-900" />
 
             {{-- Form Biodata --}}
             <x-input-label for="nama" value="Nama Peserta" class="text-white" />
@@ -82,87 +71,65 @@
             <x-input-label for="alamat" value="Alamat" class="text-white" />
             <textarea name="alamat" id="alamat" class="block w-full mb-4 bg-sky-900 text-white rounded">{{ old('alamat') }}</textarea>
 
-            <x-input-label for="id_desa" value="Desa/Kelurahan (pilih dari daftar)" class="text-white" />
-            <input list="daftar-desa" name="id_desa" id="id_desa"
-                class="block w-full mb-4 bg-sky-900 text-white placeholder-white/50"
-                placeholder="contoh: desa/kel kec kab/kota prov" value="{{ old('id_desa') }}">
-            <datalist id="daftar-desa">
-                @foreach($kelurahans as $desa)
-                    <option value="{{ $desa->id }}">
-                        {{ $desa->nama }} - {{ $desa->kecamatan->nama ?? '' }} - {{ $desa->kecamatan->kabupatenKota->nama ?? '' }} - {{ $desa->kecamatan->kabupatenKota->provinsi->nama ?? '' }}
-                    </option>
-                @endforeach
-            </datalist>
+            {{-- Desa/Kelurahan Search --}}
+            <div class="relative">
+                <label for="id_desa" class="block font-semibold text-white">Desa/Kelurahan</label>
+                <input type="text" id="desa_search" placeholder="Ketik nama desa..."
+                    class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white placeholder-white/50"
+                    autocomplete="off">
+                <input type="hidden" name="id_desa" id="id_desa" value="{{ old('id_desa') }}">
 
-            <x-input-label value="Provinsi" class="text-white" />
-            <input type="text" id="provinsi" name="provinsi" readonly class="block w-full mb-2 bg-sky-800 text-white">
+                <ul id="desa_results"
+                    class="absolute z-10 mt-1 w-full bg-sky-800 border border-yellow-400/30 rounded-lg text-white max-h-52 overflow-y-auto hidden">
+                </ul>
+            </div>
 
-            <x-input-label value="Kabupaten" class="text-white" />
-            <input type="text" id="kabupaten" name="kabupaten" readonly class="block w-full mb-2 bg-sky-800 text-white">
+            {{-- Wilayah Otomatis --}}
+            @foreach (['provinsi', 'kabupaten', 'kecamatan', 'desa', 'kode_desa'] as $field)
+                <div>
+                    <label class="block font-semibold text-white mt-2">{{ ucwords(str_replace('_', ' ', $field)) }}</label>
+                    <input type="text" id="{{ $field }}" name="{{ $field }}" readonly
+                        class="bg-sky-800 border border-yellow-400/20 rounded-lg w-full text-white">
+                </div>
+            @endforeach
 
-            <x-input-label value="Kecamatan" class="text-white" />
-            <input type="text" id="kecamatan" name="kecamatan" readonly class="block w-full mb-2 bg-sky-800 text-white">
+            {{-- Input Lainnya --}}
+            @php
+                $fields = [
+                    'nik' => 'NIK', 'npwp' => 'NPWP (opsional)', 'tempat_lahir' => 'Tempat Lahir',
+                    'tanggal_lahir' => 'Tanggal Lahir', 'jabatan' => 'Jabatan',
+                    'lama_menjabat' => 'Lama Menjabat (tahun)', 'nomor_sk_jabatan' => 'Nomor SK Jabatan',
+                    'no_telp' => 'No Telepon'
+                ];
+            @endphp
 
-            <x-input-label value="Kelurahan" class="text-white" />
-            <input type="text" id="desa" name="kelurahan" readonly class="block w-full mb-2 bg-sky-800 text-white">
+            @foreach($fields as $key => $label)
+                <x-input-label for="{{ $key }}" value="{{ $label }}" class="text-white mt-2" />
+                <x-text-input id="{{ $key }}" name="{{ $key }}" type="{{ $key === 'tanggal_lahir' ? 'date' : ($key === 'lama_menjabat' ? 'number' : 'text') }}"
+                    class="w-full mb-4 bg-sky-900 text-white"
+                    value="{{ old($key) }}" />
+            @endforeach
 
-            <x-input-label value="Kode Desa" class="text-white" />
-            <input type="text" id="kode_desa" name="kode_desa" readonly class="block w-full mb-4 bg-sky-800 text-white">
+            {{-- Dropdowns --}}
+            @php
+                $dropdowns = [
+                    'jenis_kelamin' => ['Laki-laki', 'Perempuan'],
+                    'agama' => ['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu','Lainnya'],
+                    'status_kawin' => ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati'],
+                    'pendidikan' => ['SD','SMP','SMA','Diploma','Sarjana','Magister','Doktor','Lainnya']
+                ];
+            @endphp
 
-            <x-input-label for="nik" value="NIK" class="text-white" />
-            <x-text-input name="nik" id="nik" class="block w-full mb-4 bg-sky-900 text-white" value="{{ old('nik') }}" />
-
-            <x-input-label for="npwp" value="NPWP (opsional)" class="text-white" />
-            <x-text-input name="npwp" id="npwp" class="block w-full mb-4 bg-sky-900 text-white" value="{{ old('npwp') }}" />
-
-            <x-input-label for="tempat_lahir" value="Tempat Lahir" class="text-white" />
-            <x-text-input name="tempat_lahir" id="tempat_lahir" class="block w-full mb-4 bg-sky-900 text-white" value="{{ old('tempat_lahir') }}" />
-
-            <x-input-label for="tanggal_lahir" value="Tanggal Lahir" class="text-white" />
-            <x-text-input name="tanggal_lahir" id="tanggal_lahir" type="date" class="block w-full mb-4 bg-sky-900 text-white" value="{{ old('tanggal_lahir') }}" />
-
-            <x-input-label for="jenis_kelamin" value="Jenis Kelamin" class="text-white" />
-            <select name="jenis_kelamin" class="block w-full mb-4 bg-sky-900 text-white rounded">
-                <option value="">-- Pilih --</option>
-                <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-            </select>
-
-            <x-input-label for="agama" value="Agama" class="text-white" />
-            <select name="agama" class="block w-full mb-4 bg-sky-900 text-white rounded">
-                <option value="">-- Pilih --</option>
-                @foreach(['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu','Lainnya'] as $agama)
-                    <option value="{{ $agama }}" {{ old('agama') == $agama ? 'selected' : '' }}>{{ $agama }}</option>
-                @endforeach
-            </select>
-
-            <x-input-label for="status_kawin" value="Status Kawin" class="text-white" />
-            <select name="status_kawin" class="block w-full mb-4 bg-sky-900 text-white rounded">
-                <option value="">-- Pilih --</option>
-                @foreach(['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati'] as $status)
-                    <option value="{{ $status }}" {{ old('status_kawin') == $status ? 'selected' : '' }}>{{ $status }}</option>
-                @endforeach
-            </select>
-
-            <x-input-label for="jabatan" value="Jabatan" class="text-white" />
-            <x-text-input name="jabatan" id="jabatan" class="block w-full mb-4 bg-sky-900 text-white" value="{{ old('jabatan') }}" />
-
-            <x-input-label for="lama_menjabat" value="Lama Menjabat (tahun)" class="text-white" />
-            <x-text-input name="lama_menjabat" id="lama_menjabat" type="number" class="block w-full mb-4 bg-sky-900 text-white" value="{{ old('lama_menjabat') }}" />
-
-            <x-input-label for="nomor_sk_jabatan" value="Nomor SK Jabatan" class="text-white" />
-            <x-text-input name="nomor_sk_jabatan" id="nomor_sk_jabatan" class="block w-full mb-4 bg-sky-900 text-white" value="{{ old('nomor_sk_jabatan') }}" />
-
-            <x-input-label for="pendidikan" value="Pendidikan" class="text-white" />
-            <select name="pendidikan" class="block w-full mb-4 bg-sky-900 text-white rounded">
-                <option value="">-- Pilih --</option>
-                @foreach(['SD', 'SMP', 'SMA', 'Diploma', 'Sarjana', 'Magister', 'Doktor', 'Lainnya'] as $edu)
-                    <option value="{{ $edu }}" {{ old('pendidikan') == $edu ? 'selected' : '' }}>{{ $edu }}</option>
-                @endforeach
-            </select>
-
-            <x-input-label for="no_telp" value="No Telepon" class="text-white" />
-            <x-text-input name="no_telp" id="no_telp" class="block w-full mb-6 bg-sky-900 text-white" value="{{ old('no_telp') }}" />
+            @foreach ($dropdowns as $name => $options)
+                <x-input-label for="{{ $name }}" value="{{ ucwords(str_replace('_', ' ', $name)) }}" class="text-white mt-2" />
+                <select id="{{ $name }}" name="{{ $name }}"
+                    class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white mb-4">
+                    <option value="">-- Pilih --</option>
+                    @foreach ($options as $opt)
+                        <option value="{{ $opt }}" {{ old($name) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                    @endforeach
+                </select>
+            @endforeach
 
             <button type="submit" class="w-full py-2 bg-yellow-400 text-blue-900 font-semibold rounded-full hover:bg-yellow-300 transition">Daftar</button>
 
@@ -174,21 +141,55 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const desaSearch = document.getElementById('desa_search');
+            const desaResults = document.getElementById('desa_results');
             const idDesaInput = document.getElementById('id_desa');
 
-            idDesaInput.addEventListener('change', () => {
-                const id = idDesaInput.value;
-                if (!id) return;
+            desaSearch.addEventListener('input', function () {
+                const query = this.value;
+                if (query.length < 3) {
+                    desaResults.innerHTML = '';
+                    desaResults.classList.add('hidden');
+                    return;
+                }
 
-                fetch(`/api/desa/${id}`)
+                fetch(`/api/search-desa?q=${encodeURIComponent(query)}`)
                     .then(res => res.json())
                     .then(data => {
-                        document.getElementById('provinsi').value = data.provinsi ?? '';
-                        document.getElementById('kabupaten').value = data.kabupaten ?? '';
-                        document.getElementById('kecamatan').value = data.kecamatan ?? '';
-                        document.getElementById('desa').value = data.desa ?? '';
-                        document.getElementById('kode_desa').value = data.kode_desa ?? '';
+                        desaResults.innerHTML = '';
+                        if (data.length === 0) {
+                            desaResults.classList.add('hidden');
+                            return;
+                        }
+
+                        data.forEach(item => {
+                            const li = document.createElement('li');
+                            li.textContent = `${item.nama} - ${item.kecamatan} - ${item.kabupaten} - ${item.provinsi}`;
+                            li.classList.add('cursor-pointer', 'px-4', 'py-2', 'hover:bg-sky-700');
+                            li.addEventListener('click', () => {
+                                desaSearch.value = li.textContent;
+                                idDesaInput.value = item.id;
+                                desaResults.classList.add('hidden');
+
+                                fetch(`/api/desa/${item.id}`)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        ['provinsi','kabupaten','kecamatan','desa','kode_desa'].forEach(field => {
+                                            document.getElementById(field).value = data[field] ?? '';
+                                        });
+                                    });
+                            });
+                            desaResults.appendChild(li);
+                        });
+
+                        desaResults.classList.remove('hidden');
                     });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!desaSearch.contains(e.target) && !desaResults.contains(e.target)) {
+                    desaResults.classList.add('hidden');
+                }
             });
 
             const oldIdDesa = '{{ old('id_desa') }}';
@@ -196,15 +197,15 @@
                 fetch(`/api/desa/${oldIdDesa}`)
                     .then(res => res.json())
                     .then(data => {
-                        document.getElementById('provinsi').value = data.provinsi ?? '';
-                        document.getElementById('kabupaten').value = data.kabupaten ?? '';
-                        document.getElementById('kecamatan').value = data.kecamatan ?? '';
-                        document.getElementById('desa').value = data.desa ?? '';
-                        document.getElementById('kode_desa').value = data.kode_desa ?? '';
+                        ['provinsi','kabupaten','kecamatan','desa','kode_desa'].forEach(field => {
+                            document.getElementById(field).value = data[field] ?? '';
+                        });
+
+                        document.getElementById('desa_search').value =
+                            `${data.desa} - ${data.kecamatan} - ${data.kabupaten} - ${data.provinsi}`;
                     });
             }
         });
     </script>
-
 </body>
 </html>

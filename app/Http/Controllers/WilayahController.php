@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 
 use App\Models\{Provinsi, KabupatenKota, Kecamatan, Kelurahan};
 
@@ -20,4 +21,25 @@ class WilayahController extends Controller
     {
         return Kelurahan::where('kecamatan_id', $kecamatan_id)->get(['id', 'nama', 'kode_desa']);
     }
+
+    public function searchDesa(Request $request)
+{
+    $q = $request->query('q');
+
+    $results = Kelurahan::with(['kecamatan.kabupatenKota.provinsi'])
+        ->where('nama', 'like', "%{$q}%")
+        ->limit(20)
+        ->get()
+        ->map(function ($desa) {
+            return [
+                'id' => $desa->id,
+                'nama' => $desa->nama,
+                'kecamatan' => $desa->kecamatan->nama ?? '',
+                'kabupaten' => $desa->kecamatan->kabupatenKota->nama ?? '',
+                'provinsi' => $desa->kecamatan->kabupatenKota->provinsi->nama ?? '',
+            ];
+        });
+
+    return response()->json($results);
+}
 }
