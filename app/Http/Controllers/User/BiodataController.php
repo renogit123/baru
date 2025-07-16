@@ -26,7 +26,7 @@ class BiodataController extends Controller
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
             'id_desa' => 'required|exists:kelurahans,id',
-            'nik' => 'required|numeric',
+            'nik' => 'required|digits:16',
             'npwp' => 'nullable|string|max:25',
             'tempat_lahir' => 'required|string',
             'tanggal_lahir' => 'required|date',

@@ -2,34 +2,52 @@
     <h2 class="text-2xl font-bold text-white mb-6">📋 Edit Biodata User</h2>
 
     <div class="max-w-4xl mx-auto p-6 bg-sky-950 rounded-xl shadow-lg text-white ring-1 ring-white/10">
+
+        @if(session('success'))
+            <div class="mb-4 bg-green-800/30 text-green-300 font-medium p-3 rounded-lg border border-green-600 shadow">
+                ✅ {{ session('success') }}
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('admin.user.biodata.update', $user->id) }}">
             @csrf
             @method('PUT')
 
             {{-- Nama --}}
             <x-input-label for="nama" value="Nama" class="text-white" />
-            <x-text-input name="nama" id="nama" class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
+            <x-text-input name="nama" id="nama" class="block w-full mb-1 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('nama', $biodata->nama ?? '') }}" />
+            @error('nama')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- Alamat --}}
             <x-input-label for="alamat" value="Alamat" class="text-white" />
             <textarea name="alamat" id="alamat"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">{{ old('alamat', $biodata->alamat ?? '') }}</textarea>
+                class="block w-full mb-1 bg-sky-900 border border-white/20 text-white rounded">{{ old('alamat', $biodata->alamat ?? '') }}</textarea>
+            @error('alamat')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
-            {{-- Desa/Kelurahan Search --}}
+            {{-- Desa Search --}}
             <div class="relative">
                 <x-input-label for="id_desa" value="Desa/Kelurahan (cari berdasarkan nama)" class="text-white" />
                 <input type="text" id="desa_search" placeholder="Ketik nama desa..."
                     class="bg-sky-900 border border-white/30 rounded-lg w-full text-white placeholder-white/50 mb-2"
                     autocomplete="off">
                 <input type="hidden" name="id_desa" id="id_desa" value="{{ old('id_desa', $biodata->id_desa ?? '') }}">
+                @error('id_desa')
+                    <small class="text-red-400">{{ $message }}</small>
+                @enderror
 
                 <ul id="desa_results"
                     class="absolute z-10 mt-1 w-full bg-sky-800 border border-white/20 rounded-lg text-white max-h-52 overflow-y-auto hidden">
                 </ul>
             </div>
 
-            {{-- Wilayah Otomatis --}}
+            {{-- Wilayah otomatis --}}
             @foreach (['provinsi', 'kabupaten', 'kecamatan', 'desa', 'kode_desa'] as $field)
                 <x-input-label for="{{ $field }}" value="{{ ucwords(str_replace('_', ' ', $field)) }}" class="text-white mt-2" />
                 <input type="text" id="{{ $field }}" name="{{ $field }}" readonly
@@ -39,79 +57,118 @@
 
             {{-- NIK --}}
             <x-input-label for="nik" value="NIK" class="text-white" />
-            <x-text-input name="nik" id="nik" class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
+            <x-text-input name="nik" id="nik" class="block w-full mb-1 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('nik', $biodata->nik ?? '') }}" />
+            @error('nik')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- Tempat Lahir --}}
             <x-input-label for="tempat_lahir" value="Tempat Lahir" class="text-white" />
             <x-text-input name="tempat_lahir" id="tempat_lahir"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
+                class="block w-full mb-1 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('tempat_lahir', $biodata->tempat_lahir ?? '') }}" />
+            @error('tempat_lahir')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- Tanggal Lahir --}}
             <x-input-label for="tanggal_lahir" value="Tanggal Lahir" class="text-white" />
             <x-text-input name="tanggal_lahir" id="tanggal_lahir" type="date"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
+                class="block w-full mb-1 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('tanggal_lahir', $biodata->tanggal_lahir ?? '') }}" />
+            @error('tanggal_lahir')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- Jenis Kelamin --}}
             <x-input-label for="jenis_kelamin" value="Jenis Kelamin" class="text-white" />
-            <select name="jenis_kelamin" class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">
+            <select name="jenis_kelamin" class="block w-full mb-1 bg-sky-900 border border-white/20 text-white rounded">
                 <option value="Laki-laki" {{ old('jenis_kelamin', $biodata->jenis_kelamin ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
                 <option value="Perempuan" {{ old('jenis_kelamin', $biodata->jenis_kelamin ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
             </select>
+            @error('jenis_kelamin')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- Status Kawin --}}
             <x-input-label for="status_kawin" value="Status Kawin" class="text-white" />
-            <select name="status_kawin" class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">
+            <select name="status_kawin" class="block w-full mb-1 bg-sky-900 border border-white/20 text-white rounded">
                 @foreach(['Kawin', 'Belum Kawin', 'Cerai Hidup', 'Cerai Mati'] as $status)
                     <option value="{{ $status }}" {{ old('status_kawin', $biodata->status_kawin ?? '') == $status ? 'selected' : '' }}>{{ $status }}</option>
                 @endforeach
             </select>
+            @error('status_kawin')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- Jabatan --}}
             <x-input-label for="jabatan" value="Jabatan" class="text-white" />
             <x-text-input name="jabatan" id="jabatan"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
+                class="block w-full mb-1 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('jabatan', $biodata->jabatan ?? '') }}" />
+            @error('jabatan')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- Lama Menjabat --}}
             <x-input-label for="lama_menjabat" value="Lama Menjabat (Tahun)" class="text-white" />
             <x-text-input name="lama_menjabat" id="lama_menjabat"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
+                class="block w-full mb-1 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('lama_menjabat', $biodata->lama_menjabat ?? '') }}" />
+            @error('lama_menjabat')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- Nomor SK --}}
             <x-input-label for="nomor_sk_jabatan" value="Nomor SK Jabatan" class="text-white" />
             <x-text-input name="nomor_sk_jabatan" id="nomor_sk_jabatan"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
+                class="block w-full mb-1 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('nomor_sk_jabatan', $biodata->nomor_sk_jabatan ?? '') }}" />
+            @error('nomor_sk_jabatan')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- Pendidikan --}}
             <x-input-label for="pendidikan" value="Pendidikan" class="text-white" />
             <select name="pendidikan" id="pendidikan"
-                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white rounded">
+                class="block w-full mb-1 bg-sky-900 border border-white/20 text-white rounded">
                 <option value="">-- Pilih --</option>
                 @foreach(['SD', 'SMP', 'SMA', 'Diploma', 'Sarjana', 'Magister', 'Doktor', 'Lainnya'] as $edu)
                     <option value="{{ $edu }}" {{ old('pendidikan', $biodata->pendidikan ?? '') == $edu ? 'selected' : '' }}>{{ $edu }}</option>
                 @endforeach
             </select>
+            @error('pendidikan')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
+            <br>
 
             {{-- No Telp --}}
             <x-input-label for="no_telp" value="No Telepon" class="text-white" />
             <x-text-input name="no_telp" id="no_telp"
-                class="block w-full mb-6 bg-sky-900 border border-white/20 text-white"
+                class="block w-full mb-4 bg-sky-900 border border-white/20 text-white"
                 value="{{ old('no_telp', $biodata->no_telp ?? '') }}" />
+            @error('no_telp')
+                <small class="text-red-400">{{ $message }}</small>
+            @enderror
 
             {{-- Tombol --}}
-            <x-primary-button class="bg-green-700 text-white font-bold px-6 py-2 rounded shadow">
+            <x-primary-button class="bg-green-700 text-white font-bold px-6 py-2 rounded shadow mt-4">
                 💾 Simpan Perubahan
             </x-primary-button>
             <a href="{{ route('admin.dashboard') }}" class="ml-4 text-sm text-white/70 hover:underline">← Kembali</a>
         </form>
     </div>
 
-    {{-- SCRIPT --}}
+    {{-- Script desa --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const desaSearch = document.getElementById('desa_search');

@@ -50,7 +50,7 @@ class BiodataUserController extends Controller
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
             'id_desa' => 'required|exists:kelurahans,id',
-            'nik' => 'required|numeric',
+            'nik' => 'required|digits:16',
             'tempat_lahir' => 'required|string',
             'tanggal_lahir' => 'required|date',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',

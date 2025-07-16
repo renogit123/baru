@@ -24,6 +24,9 @@
                 <x-text-input id="nama" name="nama" type="text"
                     class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white"
                     value="{{ old('nama', $biodata->nama ?? '') }}" />
+                @error('nama')
+                    <small class="text-red-400">{{ $message }}</small>
+                @enderror
             </div>
 
             {{-- Alamat --}}
@@ -31,6 +34,9 @@
                 <label for="alamat" class="block font-semibold text-yellow-200">Alamat Peserta</label>
                 <textarea id="alamat" name="alamat" rows="3"
                     class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white">{{ old('alamat', $biodata->alamat ?? '') }}</textarea>
+                @error('alamat')
+                    <small class="text-red-400">{{ $message }}</small>
+                @enderror
             </div>
 
             {{-- Desa/Kelurahan Search --}}
@@ -40,6 +46,9 @@
                     class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white placeholder-white/50"
                     autocomplete="off">
                 <input type="hidden" name="id_desa" id="id_desa" value="{{ old('id_desa', $biodata->id_desa ?? '') }}">
+                @error('id_desa')
+                    <small class="text-red-400">{{ $message }}</small>
+                @enderror
 
                 <ul id="desa_results"
                     class="absolute z-10 mt-1 w-full bg-sky-800 border border-yellow-400/30 rounded-lg text-white max-h-52 overflow-y-auto hidden">
@@ -58,9 +67,13 @@
             {{-- Input Lainnya --}}
             @php
                 $fields = [
-                    'nik' => 'NIK', 'npwp' => 'NPWP (opsional)', 'tempat_lahir' => 'Tempat Lahir',
-                    'tanggal_lahir' => 'Tanggal Lahir', 'jabatan' => 'Jabatan',
-                    'lama_menjabat' => 'Lama Menjabat (tahun)', 'nomor_sk_jabatan' => 'Nomor SK Jabatan',
+                    'nik' => 'NIK',
+                    'npwp' => 'NPWP (opsional)',
+                    'tempat_lahir' => 'Tempat Lahir',
+                    'tanggal_lahir' => 'Tanggal Lahir',
+                    'jabatan' => 'Jabatan',
+                    'lama_menjabat' => 'Lama Menjabat (tahun)',
+                    'nomor_sk_jabatan' => 'Nomor SK Jabatan',
                     'no_telp' => 'No Telepon'
                 ];
             @endphp
@@ -71,6 +84,9 @@
                     <x-text-input id="{{ $key }}" name="{{ $key }}" type="{{ $key === 'tanggal_lahir' ? 'date' : ($key === 'lama_menjabat' ? 'number' : 'text') }}"
                         class="bg-sky-900 border border-yellow-400/30 rounded-lg w-full text-white"
                         value="{{ old($key, $biodata->$key ?? '') }}" />
+                    @error($key)
+                        <small class="text-red-400">{{ $message }}</small>
+                    @enderror
                 </div>
             @endforeach
 
@@ -94,6 +110,9 @@
                             <option value="{{ $opt }}" {{ old($name, $biodata->$name ?? '') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
                         @endforeach
                     </select>
+                    @error($name)
+                        <small class="text-red-400">{{ $message }}</small>
+                    @enderror
                 </div>
             @endforeach
 
@@ -169,7 +188,6 @@
                             document.getElementById(field).value = data[field] ?? '';
                         });
 
-                        // tampilkan kembali di input search
                         document.getElementById('desa_search').value =
                             `${data.desa} - ${data.kecamatan} - ${data.kabupaten} - ${data.provinsi}`;
                     });
